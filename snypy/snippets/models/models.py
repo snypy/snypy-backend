@@ -1,9 +1,12 @@
 from django.db import models
 
 from core.models import BaseModel
+from .managers import SnippetManager, FileManager, LabelManager, LanguageManager, ExtensionManager, SnippetLabelManager
 
 
 class Snippet(BaseModel):
+
+    objects = SnippetManager()
 
     VISIBILITY_PUBLIC = 'PUBLIC'
     VISIBILITY_PRIVATE = 'PRIVATE'
@@ -36,7 +39,9 @@ class Snippet(BaseModel):
 
 
 class File(BaseModel):
-    
+
+    objects = FileManager()
+
     snippet = models.ForeignKey(
         'Snippet',
         related_name='files',
@@ -70,7 +75,9 @@ class File(BaseModel):
 
 
 class Label(BaseModel):
-    
+
+    objects = LabelManager()
+
     snippets = models.ManyToManyField(
         'Snippet',
         related_name='labels',
@@ -89,6 +96,8 @@ class Label(BaseModel):
 
 class Language(BaseModel):
 
+    objects = LanguageManager()
+
     name = models.CharField(
         verbose_name='Name',
         max_length=255,
@@ -98,6 +107,8 @@ class Language(BaseModel):
 
 
 class Extension(BaseModel):
+
+    objects = ExtensionManager()
 
     language = models.ForeignKey(
         'Language',
@@ -118,7 +129,9 @@ class Extension(BaseModel):
 
 
 class SnippetLabel(BaseModel):
-    
+
+    objects = SnippetLabelManager()
+
     snippet = models.ForeignKey(
         'Snippet',
         related_name='snippet_labels',
