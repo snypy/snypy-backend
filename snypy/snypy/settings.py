@@ -13,7 +13,9 @@ SECRET_KEY = 'paouzd*26gjs4r1ut%ki%%cw^kueb8!8zy$hdjc-p_p1b8)!2g'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'snypy.test',
+]
 
 
 # Application definition
@@ -30,6 +32,7 @@ INSTALLED_APPS = [
     # third party
     'rest_framework',
     'django_rest_multitokenauth',
+    'corsheaders',
 
     # local
     'snippets',
@@ -39,6 +42,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -122,3 +126,9 @@ REST_FRAMEWORK = {
         'django_rest_multitokenauth.coreauthentication.MultiTokenAuthentication',
     ],
 }
+
+# CORS
+CORS_ORIGIN_WHITELIST = (
+    'localhost:4200',
+)
+CORS_ALLOW_CREDENTIALS = True

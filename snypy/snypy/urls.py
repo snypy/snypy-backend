@@ -26,7 +26,7 @@ from snippets import urls as snippets_urls
 
 
 # Register rest views
-router.register(r'users', UserViewSet)
+router.register(r'user', UserViewSet)
 
 
 urlpatterns = [
