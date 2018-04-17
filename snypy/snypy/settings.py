@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_rest_multitokenauth',
     'corsheaders',
+    'django_userforeignkey',
 
     # local
     'snippets',
@@ -48,6 +49,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_userforeignkey.middleware.UserForeignKeyMiddleware',
 ]
 
 ROOT_URLCONF = 'snypy.urls'

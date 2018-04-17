@@ -8,34 +8,34 @@ from ..models import Snippet, File, Label, Language, SnippetLabel, Extension
 class SnippetSerializer(BaseSerializer):
     class Meta:
         model = Snippet
-        fields = ('url', 'title', 'description', 'visibility', )
+        fields = ('pk', 'url', 'title', 'description', 'visibility', 'user', )
 
 
 class FileSerializer(BaseSerializer):
     class Meta:
         model = File
-        fields = ('url', 'snippet', 'language', 'name', 'content', )
+        fields = ('pk', 'url', 'snippet', 'language', 'name', 'content', )
 
 
 class LabelSerializer(BaseSerializer):
     class Meta:
         model = Label
-        fields = ('url', 'snippets', 'name', )
+        fields = ('pk', 'url', 'snippets', 'name', 'user', )
 
 
 class LanguageSerializer(BaseSerializer):
     class Meta:
         model = Language
-        fields = ('url', 'name', )
+        fields = ('pk', 'url', 'name', )
 
 
 class SnippetLabelSerializer(BaseSerializer):
     class Meta:
         model = SnippetLabel
-        fields = ('url', 'snippet', 'label', )
+        fields = ('pk', 'url', 'snippet', 'label', )
 
 
 class ExtensionSerializer(BaseSerializer):
     class Meta:
         model = Extension
-        fields = ('url', 'name', 'language', )
+        fields = ('pk', 'url', 'name', 'language', )

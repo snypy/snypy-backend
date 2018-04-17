@@ -1,5 +1,7 @@
 from django.db import models
 
+from django_userforeignkey.models.fields import UserForeignKey
+
 from core.models import BaseModel
 from .managers import SnippetManager, FileManager, LabelManager, LanguageManager, ExtensionManager, SnippetLabelManager
 
@@ -14,6 +16,14 @@ class Snippet(BaseModel):
     VISIBILITIEWS = (
         (VISIBILITY_PUBLIC, 'Public'),
         (VISIBILITY_PRIVATE, 'Private'),
+    )
+
+    user = UserForeignKey(
+        auto_user_add=True,
+        verbose_name="User",
+        related_name="snippets",
+        editable=False,
+        on_delete=models.CASCADE,
     )
     
     title = models.CharField(
@@ -86,6 +96,14 @@ class Label(BaseModel):
         through_fields=('label', 'snippet', ),
     )
 
+    user = UserForeignKey(
+        auto_user_add=True,
+        verbose_name="User",
+        related_name="labels",
+        editable=False,
+        on_delete=models.CASCADE,
+    )
+
     name = models.CharField(
         verbose_name='Name',
         max_length=255,
@@ -149,3 +167,4 @@ class SnippetLabel(BaseModel):
         null=False,
         blank=False,
     )
+
