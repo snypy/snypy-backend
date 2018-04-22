@@ -1,13 +1,31 @@
 from rest_framework.relations import PrimaryKeyRelatedField
-from rest_framework.fields import SerializerMethodField
+from rest_framework.fields import SerializerMethodField, IntegerField
 
 from core.rest.serializers import BaseSerializer
 from ..models import Snippet, File, Label, Language, SnippetLabel, Extension
 
 
-class SnippetSerializer(BaseSerializer):
+class SnippetFileSerializer(BaseSerializer):
+    pk = IntegerField(read_only=False)
+    language = PrimaryKeyRelatedField(queryset=Language.objects.all())
 
+    class Meta:
+        model = File
+        fields = (
+            'pk',
+            'url',
+            'language',
+            'name',
+            'content',
+            'created_date',
+            'modified_date',
+        )
+
+
+class SnippetSerializer(BaseSerializer):
     user_display = SerializerMethodField()
+    labels = PrimaryKeyRelatedField(many=True, read_only=False, queryset=Label.objects.all())
+    files = SnippetFileSerializer(File.objects.none(), many=True)
 
     class Meta:
         model = Snippet
@@ -21,11 +39,48 @@ class SnippetSerializer(BaseSerializer):
             'user_display',
             'created_date',
             'modified_date',
+            'labels',
+            'files',
         )
 
     def get_user_display(self, obj):
         if obj.user:
             return obj.user.username
+
+    def save(self):
+        # Extract nested fields
+        labels = self.validated_data.pop('labels')
+        files = self.validated_data.pop('files')
+
+        # Save instance
+        instance = super(SnippetSerializer, self).save()
+
+        # Save labels
+        self.instance.labels.clear()
+        labels_to_add = []
+        for label in labels:
+            labels_to_add.append(SnippetLabel(label=label, snippet=self.instance))
+        SnippetLabel.objects.bulk_create(labels_to_add)
+
+        files_to_add = []
+        files_to_update = []
+        for file in files:
+            if 'pk' in file and file['pk'] is not None:
+                files_to_update.append(file)
+            else:
+                files_to_add.append(
+                    File(**file)
+                )
+
+        # Delete old files
+        instance.files.exclude(pk__in=[file['pk'] for file in files_to_update]).delete()
+
+        # Add new files
+        instance.files.bulk_create(files_to_add)
+
+        # Update existing files
+        for file in files_to_update:
+            instance.files.filter(pk=file.pop('pk')).update(**file)
 
 
 class FileSerializer(BaseSerializer):

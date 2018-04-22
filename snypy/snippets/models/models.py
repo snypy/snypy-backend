@@ -67,7 +67,7 @@ class File(BaseModel, DateModelMixin):
 
     language = models.ForeignKey(
         'Language',
-        related_name='language',
+        related_name='files',
         verbose_name='Language',
         on_delete=models.CASCADE,
         null=False,

@@ -1,5 +1,5 @@
-from django.db.models.manager import BaseManager as DjangoBaseManager
+from django.db.models import manager
 
 
-class BaseManager(DjangoBaseManager):
+class BaseManager(manager.Manager):
     pass
