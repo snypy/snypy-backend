@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.encoding import force_text
 
 from django_userforeignkey.models.fields import UserForeignKey
 
@@ -47,6 +48,9 @@ class Snippet(BaseModel):
         blank=False,
     )
 
+    def __str__(self):
+        return self.title
+
 
 class File(BaseModel):
 
@@ -83,6 +87,9 @@ class File(BaseModel):
         blank=True,
     )
 
+    def __str__(self):
+        return self.name
+
 
 class Label(BaseModel):
 
@@ -111,6 +118,9 @@ class Label(BaseModel):
         blank=False,
     )
 
+    def __str__(self):
+        return self.name
+
 
 class Language(BaseModel):
 
@@ -122,6 +132,9 @@ class Language(BaseModel):
         null=False,
         blank=False,
     )
+
+    def __str__(self):
+        return self.name
 
 
 class Extension(BaseModel):
@@ -145,6 +158,9 @@ class Extension(BaseModel):
         unique=True,
     )
 
+    def __str__(self):
+        return self.name
+
 
 class SnippetLabel(BaseModel):
 
@@ -167,4 +183,7 @@ class SnippetLabel(BaseModel):
         null=False,
         blank=False,
     )
+
+    def __str__(self):
+        return f'{force_text(self.snippet)} - {force_text(self.label)}'
 

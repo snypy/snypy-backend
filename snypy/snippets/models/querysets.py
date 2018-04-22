@@ -1,25 +1,25 @@
 from core.models.querysets import BaseQuerySet
 
 
-class SnippetManager(BaseQuerySet):
+class SnippetQuerySet(BaseQuerySet):
     pass
 
 
-class FileManager(BaseQuerySet):
+class FileQuerySet(BaseQuerySet):
     pass
 
 
-class LabelManager(BaseQuerySet):
+class LabelQuerySet(BaseQuerySet):
     pass
 
 
-class LanguageManager(BaseQuerySet):
+class LanguageQuerySet(BaseQuerySet):
     pass
 
 
-class ExtensionManager(BaseQuerySet):
+class ExtensionQuerySet(BaseQuerySet):
     pass
 
 
-class SnippetLabelManager(BaseQuerySet):
+class SnippetLabelQuerySet(BaseQuerySet):
     pass
