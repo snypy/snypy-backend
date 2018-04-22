@@ -1,13 +1,31 @@
 from rest_framework.relations import PrimaryKeyRelatedField
+from rest_framework.fields import SerializerMethodField
 
 from core.rest.serializers import BaseSerializer
 from ..models import Snippet, File, Label, Language, SnippetLabel, Extension
 
 
 class SnippetSerializer(BaseSerializer):
+
+    user_display = SerializerMethodField()
+
     class Meta:
         model = Snippet
-        fields = ('pk', 'url', 'title', 'description', 'visibility', 'user', )
+        fields = (
+            'pk',
+            'url',
+            'title',
+            'description',
+            'visibility',
+            'user',
+            'user_display',
+            'created_date',
+            'modified_date',
+        )
+
+    def get_user_display(self, obj):
+        if obj.user:
+            return obj.user.username
 
 
 class FileSerializer(BaseSerializer):
@@ -16,7 +34,16 @@ class FileSerializer(BaseSerializer):
 
     class Meta:
         model = File
-        fields = ('pk', 'url', 'snippet', 'language', 'name', 'content', )
+        fields = (
+            'pk',
+            'url',
+            'snippet',
+            'language',
+            'name',
+            'content',
+            'created_date',
+            'modified_date',
+        )
 
 
 class LabelSerializer(BaseSerializer):
@@ -24,13 +51,25 @@ class LabelSerializer(BaseSerializer):
 
     class Meta:
         model = Label
-        fields = ('pk', 'url', 'snippets', 'name', 'user', )
+        fields = (
+            'pk',
+            'url',
+            'snippets',
+            'name',
+            'user',
+            'created_date',
+            'modified_date',
+        )
 
 
 class LanguageSerializer(BaseSerializer):
     class Meta:
         model = Language
-        fields = ('pk', 'url', 'name', )
+        fields = (
+            'pk',
+            'url',
+            'name',
+        )
 
 
 class SnippetLabelSerializer(BaseSerializer):
@@ -39,7 +78,12 @@ class SnippetLabelSerializer(BaseSerializer):
 
     class Meta:
         model = SnippetLabel
-        fields = ('pk', 'url', 'snippet', 'label', )
+        fields = (
+            'pk',
+            'url',
+            'snippet',
+            'label',
+        )
 
 
 class ExtensionSerializer(BaseSerializer):
@@ -47,4 +91,9 @@ class ExtensionSerializer(BaseSerializer):
 
     class Meta:
         model = Extension
-        fields = ('pk', 'url', 'name', 'language', )
+        fields = (
+            'pk',
+            'url',
+            'name',
+            'language',
+        )

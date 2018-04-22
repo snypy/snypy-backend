@@ -3,11 +3,11 @@ from django.utils.encoding import force_text
 
 from django_userforeignkey.models.fields import UserForeignKey
 
-from core.models import BaseModel
+from core.models import BaseModel, DateModelMixin
 from .managers import SnippetManager, FileManager, LabelManager, LanguageManager, ExtensionManager, SnippetLabelManager
 
 
-class Snippet(BaseModel):
+class Snippet(BaseModel, DateModelMixin):
 
     objects = SnippetManager()
 
@@ -52,7 +52,7 @@ class Snippet(BaseModel):
         return self.title
 
 
-class File(BaseModel):
+class File(BaseModel, DateModelMixin):
 
     objects = FileManager()
 
@@ -91,7 +91,7 @@ class File(BaseModel):
         return self.name
 
 
-class Label(BaseModel):
+class Label(BaseModel, DateModelMixin):
 
     objects = LabelManager()
 
