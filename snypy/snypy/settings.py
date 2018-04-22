@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'django_rest_multitokenauth',
     'corsheaders',
     'django_userforeignkey',
+    'django_filters',
 
     # local
     'snippets',
@@ -127,6 +128,10 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'django_rest_multitokenauth.coreauthentication.MultiTokenAuthentication',
     ],
+    'DEFAULT_FILTER_BACKENDS': (
+        'rest_framework.filters.SearchFilter',
+        'django_filters.rest_framework.DjangoFilterBackend',
+    )
 }
 
 # CORS

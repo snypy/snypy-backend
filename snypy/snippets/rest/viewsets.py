@@ -1,4 +1,5 @@
 from core.rest.viewsets import BaseModelViewSet
+from snippets.rest.filters import FileFilter
 from ..models import Snippet, File, Label, Language, SnippetLabel, Extension
 from .serializers import SnippetSerializer, FileSerializer, LabelSerializer, LanguageSerializer, \
     SnippetLabelSerializer, ExtensionSerializer
@@ -14,6 +15,7 @@ class FileViewSet(BaseModelViewSet):
     queryset = File.objects.all()
     serializer_class = FileSerializer
     search_fields = ('name', )
+    filter_class = FileFilter
 
 
 class LabelViewSet(BaseModelViewSet):
