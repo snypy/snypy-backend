@@ -6,7 +6,7 @@ from ..models import Snippet, File, Label, Language, SnippetLabel, Extension
 
 
 class SnippetFileSerializer(BaseSerializer):
-    pk = IntegerField(read_only=False)
+    pk = IntegerField(read_only=False, required=False)
     language = PrimaryKeyRelatedField(queryset=Language.objects.all())
 
     class Meta:
@@ -68,6 +68,7 @@ class SnippetSerializer(BaseSerializer):
             if 'pk' in file and file['pk'] is not None:
                 files_to_update.append(file)
             else:
+                file['snippet'] = instance
                 files_to_add.append(
                     File(**file)
                 )
