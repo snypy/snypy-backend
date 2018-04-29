@@ -35,5 +35,8 @@ class SnippetFilter(django_filters.FilterSet):
         pass
 
     def is_labeled(self, queryset, name, value):
-        pass
+        if value:
+            return queryset.exclude(labels=None)
+
+        return queryset.filter(labels=None)
 
