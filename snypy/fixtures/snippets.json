@@ -1,0 +1,334 @@
+[
+{
+    "model": "snippets.snippet",
+    "pk": 1,
+    "fields": {
+        "created_date": "2018-04-22T07:26:49.519Z",
+        "modified_date": "2018-04-29T07:52:29.746Z",
+        "user": null,
+        "title": "Wordpress Docker Compose",
+        "description": "Easy Wordpress development with Docker and Docker Compose",
+        "visibility": "PRIVATE"
+    }
+},
+{
+    "model": "snippets.snippet",
+    "pk": 6,
+    "fields": {
+        "created_date": "2018-04-25T17:42:53.893Z",
+        "modified_date": "2018-04-29T07:57:42.405Z",
+        "user": null,
+        "title": "Docker database dumps",
+        "description": "sudo ./export.sh",
+        "visibility": "PRIVATE"
+    }
+},
+{
+    "model": "snippets.snippet",
+    "pk": 7,
+    "fields": {
+        "created_date": "2018-04-25T17:55:10.896Z",
+        "modified_date": "2018-04-29T07:57:04.636Z",
+        "user": null,
+        "title": "Markdown reference",
+        "description": "This is intended as a quick reference for markdown syntax.",
+        "visibility": "PRIVATE"
+    }
+},
+{
+    "model": "snippets.file",
+    "pk": 1,
+    "fields": {
+        "created_date": "2018-04-22T07:26:49.468Z",
+        "modified_date": "2018-04-22T07:34:17.882Z",
+        "snippet": 1,
+        "language": 10,
+        "name": "docker-compose.yml",
+        "content": "version: '2'\r\nservices:\r\n  wordpress:\r\n    image: wordpress:latest # https://hub.docker.com/_/wordpress/\r\n    ports:\r\n      - 127.0.0.1:80:80 # change ip if required\r\n    volumes:\r\n      - ./config/php.conf.uploads.ini:/usr/local/etc/php/conf.d/uploads.ini\r\n      - ./wp-app:/var/www/html # Full wordpress project\r\n      #- ./plugin-name/trunk/:/var/www/html/wp-content/plugins/plugin-name # Plugin development\r\n      #- ./theme-name/trunk/:/var/www/html/wp-content/themes/theme-name # Theme development\r\n    environment:\r\n      WORDPRESS_DB_HOST: db\r\n      WORDPRESS_DB_NAME: wordpress\r\n      WORDPRESS_DB_USER: root\r\n      WORDPRESS_DB_PASSWORD: password\r\n    depends_on:\r\n      - db\r\n    networks:\r\n      - wordpress-network\r\n  db:\r\n    image: mysql:latest # https://hub.docker.com/_/mysql/ - or mariadb https://hub.docker.com/_/mariadb\r\n    ports:\r\n      - 127.0.0.1:3306:3306 # change ip if required\r\n    command: [\r\n        '--default_authentication_plugin=mysql_native_password',\r\n        '--character-set-server=utf8mb4',\r\n        '--collation-server=utf8mb4_unicode_ci'\r\n    ]\r\n    volumes:\r\n      - ./wp-data:/docker-entrypoint-initdb.d\r\n    environment:\r\n      MYSQL_DATABASE: wordpress\r\n      MYSQL_ROOT_PASSWORD: password\r\n    networks:\r\n      - wordpress-network\r\nnetworks:\r\n  wordpress-network:\r\n      driver: bridge"
+    }
+},
+{
+    "model": "snippets.file",
+    "pk": 9,
+    "fields": {
+        "created_date": "2018-04-29T07:33:47.850Z",
+        "modified_date": "2018-04-29T07:33:47.850Z",
+        "snippet": 6,
+        "language": 8,
+        "name": "export.sh",
+        "content": "#!/bin/bash\n_os=\"`uname`\"\n_now=$(date +\"%m_%d_%Y\")\n_file=\"wp-data/data_$_now.sql\"\ndocker-compose exec db sh -c 'exec mysqldump \"$MYSQL_DATABASE\" -uroot -p\"$MYSQL_ROOT_PASSWORD\"' > $_file\nif [[ $_os == \"Darwin\"* ]] ; then\n  sed -i '.bak' 1,1d $_file\nelse\n  sed -i 1,1d $_file # Removes the password warning from the file\nfi"
+    }
+},
+{
+    "model": "snippets.file",
+    "pk": 10,
+    "fields": {
+        "created_date": "2018-04-29T07:57:04.646Z",
+        "modified_date": "2018-04-29T07:57:04.646Z",
+        "snippet": 7,
+        "language": 9,
+        "name": "docs.md",
+        "content": "# H1\n## H2\n### H3\n#### H4\n##### H5\n###### H6\n\nAlternatively, for H1 and H2, an underline-ish style:\n\nAlt-H1\n======\n\nAlt-H2\n------\n\nEmphasis, aka italics, with *asterisks* or _underscores_.\n\nStrong emphasis, aka bold, with **asterisks** or __underscores__.\n\nCombined emphasis with **asterisks and _underscores_**.\n\nStrikethrough uses two tildes. ~~Scratch this.~~\n\n1. First ordered list item\n2. Another item\n\u22c5\u22c5* Unordered sub-list. \n1. Actual numbers don't matter, just that it's a number\n\u22c5\u22c51. Ordered sub-list\n4. And another item.\n\n\u22c5\u22c5\u22c5You can have properly indented paragraphs within list items. Notice the blank line above, and the leading spaces (at least one, but we'll use three here to also align the raw Markdown).\n\n\u22c5\u22c5\u22c5To have a line break without a paragraph, you will need to use two trailing spaces.\u22c5\u22c5\n\u22c5\u22c5\u22c5Note that this line is separate, but within the same paragraph.\u22c5\u22c5\n\u22c5\u22c5\u22c5(This is contrary to the typical GFM line break behaviour, where trailing spaces are not required.)\n\n* Unordered list can use asterisks\n- Or minuses\n+ Or pluses"
+    }
+},
+{
+    "model": "snippets.label",
+    "pk": 1,
+    "fields": {
+        "created_date": "2018-04-22T07:26:49.494Z",
+        "modified_date": "2018-04-22T07:26:49.507Z",
+        "user": null,
+        "name": "Django"
+    }
+},
+{
+    "model": "snippets.label",
+    "pk": 2,
+    "fields": {
+        "created_date": "2018-04-22T07:26:49.494Z",
+        "modified_date": "2018-04-22T07:26:49.507Z",
+        "user": 1,
+        "name": "Angular"
+    }
+},
+{
+    "model": "snippets.label",
+    "pk": 3,
+    "fields": {
+        "created_date": "2018-04-22T07:26:49.494Z",
+        "modified_date": "2018-04-22T07:26:49.507Z",
+        "user": 1,
+        "name": "Laravel"
+    }
+},
+{
+    "model": "snippets.label",
+    "pk": 4,
+    "fields": {
+        "created_date": "2018-04-22T07:26:49.494Z",
+        "modified_date": "2018-04-22T07:26:49.507Z",
+        "user": 1,
+        "name": "Wordpress"
+    }
+},
+{
+    "model": "snippets.label",
+    "pk": 5,
+    "fields": {
+        "created_date": "2018-04-22T07:26:49.494Z",
+        "modified_date": "2018-04-22T07:26:49.507Z",
+        "user": 1,
+        "name": "Drupal"
+    }
+},
+{
+    "model": "snippets.label",
+    "pk": 6,
+    "fields": {
+        "created_date": "2018-04-22T07:26:49.494Z",
+        "modified_date": "2018-04-22T07:26:49.507Z",
+        "user": 1,
+        "name": "Typo3"
+    }
+},
+{
+    "model": "snippets.label",
+    "pk": 7,
+    "fields": {
+        "created_date": "2018-04-22T07:26:49.494Z",
+        "modified_date": "2018-04-22T07:26:49.507Z",
+        "user": 1,
+        "name": "Symfony"
+    }
+},
+{
+    "model": "snippets.label",
+    "pk": 8,
+    "fields": {
+        "created_date": "2018-04-22T07:26:49.494Z",
+        "modified_date": "2018-04-22T07:26:49.507Z",
+        "user": 1,
+        "name": "Linux"
+    }
+},
+{
+    "model": "snippets.label",
+    "pk": 9,
+    "fields": {
+        "created_date": "2018-04-22T07:26:49.494Z",
+        "modified_date": "2018-04-22T07:26:49.507Z",
+        "user": 1,
+        "name": "Prestashop"
+    }
+},
+{
+    "model": "snippets.label",
+    "pk": 10,
+    "fields": {
+        "created_date": "2018-04-22T07:26:49.494Z",
+        "modified_date": "2018-04-22T07:26:49.507Z",
+        "user": 1,
+        "name": "Magento"
+    }
+},
+{
+    "model": "snippets.label",
+    "pk": 11,
+    "fields": {
+        "created_date": "2018-04-29T07:52:05.488Z",
+        "modified_date": "2018-04-29T07:52:05.488Z",
+        "user": null,
+        "name": "Docker"
+    }
+},
+{
+    "model": "snippets.language",
+    "pk": 1,
+    "fields": {
+        "name": "python"
+    }
+},
+{
+    "model": "snippets.language",
+    "pk": 2,
+    "fields": {
+        "name": "php"
+    }
+},
+{
+    "model": "snippets.language",
+    "pk": 3,
+    "fields": {
+        "name": "css"
+    }
+},
+{
+    "model": "snippets.language",
+    "pk": 4,
+    "fields": {
+        "name": "html"
+    }
+},
+{
+    "model": "snippets.language",
+    "pk": 5,
+    "fields": {
+        "name": "text"
+    }
+},
+{
+    "model": "snippets.language",
+    "pk": 6,
+    "fields": {
+        "name": "typescript"
+    }
+},
+{
+    "model": "snippets.language",
+    "pk": 7,
+    "fields": {
+        "name": "javascript"
+    }
+},
+{
+    "model": "snippets.language",
+    "pk": 8,
+    "fields": {
+        "name": "sh"
+    }
+},
+{
+    "model": "snippets.language",
+    "pk": 9,
+    "fields": {
+        "name": "markdown"
+    }
+},
+{
+    "model": "snippets.language",
+    "pk": 10,
+    "fields": {
+        "name": "yaml"
+    }
+},
+{
+    "model": "snippets.extension",
+    "pk": 1,
+    "fields": {
+        "language": 1,
+        "name": "py"
+    }
+},
+{
+    "model": "snippets.extension",
+    "pk": 2,
+    "fields": {
+        "language": 2,
+        "name": "php"
+    }
+},
+{
+    "model": "snippets.extension",
+    "pk": 3,
+    "fields": {
+        "language": 3,
+        "name": "css"
+    }
+},
+{
+    "model": "snippets.extension",
+    "pk": 4,
+    "fields": {
+        "language": 4,
+        "name": "html"
+    }
+},
+{
+    "model": "snippets.extension",
+    "pk": 5,
+    "fields": {
+        "language": 4,
+        "name": "htm"
+    }
+},
+{
+    "model": "snippets.extension",
+    "pk": 6,
+    "fields": {
+        "language": 5,
+        "name": "txt"
+    }
+},
+{
+    "model": "snippets.extension",
+    "pk": 7,
+    "fields": {
+        "language": 10,
+        "name": "yml"
+    }
+},
+{
+    "model": "snippets.snippetlabel",
+    "pk": 239,
+    "fields": {
+        "snippet": 1,
+        "label": 4
+    }
+},
+{
+    "model": "snippets.snippetlabel",
+    "pk": 240,
+    "fields": {
+        "snippet": 1,
+        "label": 11
+    }
+},
+{
+    "model": "snippets.snippetlabel",
+    "pk": 241,
+    "fields": {
+        "snippet": 6,
+        "label": 11
+    }
+}
+]
