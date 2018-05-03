@@ -36,7 +36,6 @@ class UserTeam(BaseModel, DateModelMixin):
     user = UserForeignKey(
         verbose_name="User",
         related_name="user_teams",
-        editable=False,
         on_delete=models.CASCADE,
     )
 

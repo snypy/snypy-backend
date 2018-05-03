@@ -1,6 +1,7 @@
 from core.rest.viewsets import BaseModelViewSet
-from snippets.rest.filters import FileFilter, SnippetFilter
+
 from ..models import Snippet, File, Label, Language, SnippetLabel, Extension
+from .filters import FileFilter, SnippetFilter
 from .serializers import SnippetSerializer, FileSerializer, LabelSerializer, LanguageSerializer, \
     SnippetLabelSerializer, ExtensionSerializer
 

@@ -23,6 +23,7 @@ from core.rest.viewsets import UserViewSet
 
 from core.utils.rest_router import router
 from snippets import urls as snippets_urls
+from teams import urls as teams_urls
 
 
 # Register rest views
