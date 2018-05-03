@@ -14,6 +14,7 @@ SECRET_KEY = 'paouzd*26gjs4r1ut%ki%%cw^kueb8!8zy$hdjc-p_p1b8)!2g'
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    'localhost',
     'snypy.test',
 ]
 
