@@ -26,7 +26,16 @@ class Snippet(BaseModel, DateModelMixin):
         editable=False,
         on_delete=models.CASCADE,
     )
-    
+
+    team = models.ForeignKey(
+        'teams.Team',
+        related_name='snippets',
+        verbose_name='Team',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+
     title = models.CharField(
         verbose_name='Title',
         max_length=255,
@@ -109,6 +118,15 @@ class Label(BaseModel, DateModelMixin):
         related_name="labels",
         editable=False,
         on_delete=models.CASCADE,
+    )
+
+    team = models.ForeignKey(
+        'teams.Team',
+        related_name='labels',
+        verbose_name='Team',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
 
     name = models.CharField(
