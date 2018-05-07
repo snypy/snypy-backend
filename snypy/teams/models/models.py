@@ -1,9 +1,14 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 
 from django_userforeignkey.models.fields import UserForeignKey
+from django_userforeignkey.request import get_current_user
 
 from core.models import BaseModel, DateModelMixin
 from .managers import TeamManager, UserTeamManger
+
+
+User = get_user_model()
 
 
 class Team(BaseModel, DateModelMixin):
@@ -27,6 +32,18 @@ class Team(BaseModel, DateModelMixin):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if self.pk is None:
+            super().save(*args, **kwargs)
+
+            UserTeam.objects.create(
+                user=User.objects.first(),  # ToDo: User current user
+                team=self,
+                role=UserTeam.ROLE_EDITOR
+            )
+        else:
+            super().save(*args, **kwargs)
 
 
 class UserTeam(BaseModel, DateModelMixin):
