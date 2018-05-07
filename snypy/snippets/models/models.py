@@ -14,7 +14,7 @@ class Snippet(BaseModel, DateModelMixin):
     VISIBILITY_PUBLIC = 'PUBLIC'
     VISIBILITY_PRIVATE = 'PRIVATE'
 
-    VISIBILITIEWS = (
+    VISIBILITIES = (
         (VISIBILITY_PUBLIC, 'Public'),
         (VISIBILITY_PRIVATE, 'Private'),
     )
@@ -51,7 +51,7 @@ class Snippet(BaseModel, DateModelMixin):
 
     visibility = models.CharField(
         max_length=31,
-        choices=VISIBILITIEWS,
+        choices=VISIBILITIES,
         default=VISIBILITY_PRIVATE,
         null=False,
         blank=False,

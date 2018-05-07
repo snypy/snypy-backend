@@ -33,6 +33,16 @@ class UserTeam(BaseModel, DateModelMixin):
 
     objects = UserTeamManger()
 
+    ROLE_EDITOR = 'EDITOR'
+    ROLE_CONTRIBUTOR = 'CONTRIBUTOR'
+    ROLE_SUBSCRIBER = 'SUBSCRIBER'
+
+    ROLES = (
+        (ROLE_EDITOR, 'Editor'),
+        (ROLE_CONTRIBUTOR, 'Contributor'),
+        (ROLE_SUBSCRIBER, 'Subscriber'),
+    )
+
     user = UserForeignKey(
         verbose_name="User",
         related_name="user_teams",
@@ -44,6 +54,14 @@ class UserTeam(BaseModel, DateModelMixin):
         related_name='user_teams',
         verbose_name='Team',
         on_delete=models.CASCADE,
+        null=False,
+        blank=False,
+    )
+
+    role = models.CharField(
+        max_length=31,
+        choices=ROLES,
+        default=ROLE_SUBSCRIBER,
         null=False,
         blank=False,
     )
