@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 from django_userforeignkey.models.fields import UserForeignKey
-from django_userforeignkey.request import get_current_user
 
 from core.models import BaseModel, DateModelMixin
 from .managers import TeamManager, UserTeamManger
