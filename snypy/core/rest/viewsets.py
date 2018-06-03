@@ -8,7 +8,7 @@ from .serializers import UserSerializer
 class BaseModelViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
-        return self.queryset.all()
+        return self.queryset.viewable()
 
 
 class UserViewSet(BaseModelViewSet):

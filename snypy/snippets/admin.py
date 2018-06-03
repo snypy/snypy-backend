@@ -4,7 +4,6 @@ from django.contrib import admin
 from .models import Snippet, File, Label, Language, SnippetLabel, Extension
 
 
-
 class SnippetLabelInline(admin.TabularInline):
     model = SnippetLabel
     extra = 1

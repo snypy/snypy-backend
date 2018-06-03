@@ -7,7 +7,7 @@ class BaseQuerySet(models.QuerySet):
         return self.all()
 
     def editable(self):
-        return self.all()
+        return self.viewable()
 
     def deletable(self):
-        return self.all()
+        return self.editable()
