@@ -126,7 +126,6 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.DjangoModelPermissions'
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
         'django_rest_multitokenauth.coreauthentication.MultiTokenAuthentication',
     ],
     'DEFAULT_FILTER_BACKENDS': (

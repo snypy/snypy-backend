@@ -37,7 +37,6 @@ urlpatterns = [
     path('api/v1/', include([
         path('', include(router.urls)),
         path('auth/', include([
-            path('session/', include('rest_framework.urls', namespace='rest_framework')),
             path(
                 'token/',
                 include(
