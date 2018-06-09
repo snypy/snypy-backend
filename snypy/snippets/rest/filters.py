@@ -29,6 +29,8 @@ class SnippetFilter(django_filters.FilterSet):
             'labels',
             'visibility',
             'files__language',
+            'user',
+            'team',
         ]
 
     def is_favorite(self, queryset, name, value):
