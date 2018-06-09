@@ -129,6 +129,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'django_rest_multitokenauth.coreauthentication.MultiTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_FILTER_BACKENDS': (
         'rest_framework.filters.SearchFilter',

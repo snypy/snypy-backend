@@ -8,4 +8,4 @@ User = get_user_model()
 class UserSerializer(BaseSerializer):
     class Meta:
         model = User
-        fields = ('url', 'username', 'email', 'is_staff')
+        fields = ('pk', 'url', 'username', 'email', 'is_staff')
