@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.conf import settings
 
 from django_userforeignkey.models.fields import UserForeignKey
 
@@ -15,7 +16,7 @@ class Team(BaseModel, DateModelMixin):
     objects = TeamManager()
 
     users = models.ManyToManyField(
-        'auth.User',
+        settings.AUTH_USER_MODEL,
         related_name='teams',
         verbose_name='Users',
         through='UserTeam',
