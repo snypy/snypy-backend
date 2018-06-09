@@ -19,15 +19,12 @@ from django.urls import include, path
 from django.conf.urls.static import static
 from django.contrib import admin
 
-from core.rest.viewsets import UserViewSet
-
+# Invoked to load REST URLs
 from core.utils.rest_router import router
 from snippets import urls as snippets_urls
 from teams import urls as teams_urls
+from users import urls as users_urls
 
-
-# Register rest views
-router.register(r'user', UserViewSet)
 
 
 urlpatterns = [
