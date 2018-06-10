@@ -1,6 +1,6 @@
 import django_filters
 
-from snippets.models import File, Snippet
+from snippets.models import File, Snippet, Label
 
 
 class FileFilter(django_filters.FilterSet):
@@ -42,3 +42,12 @@ class SnippetFilter(django_filters.FilterSet):
 
         return queryset.filter(labels=None)
 
+
+class LabelFilter(django_filters.FilterSet):
+
+    class Meta:
+        model = Label
+        fields = [
+            'user',
+            'team',
+        ]
