@@ -127,7 +127,17 @@ class LabelSerializer(BaseSerializer):
             'user',
             'created_date',
             'modified_date',
+            'team',
         )
+
+    def validate_team(self, team):
+        if team is None:
+            return
+
+        if Team.objects.viewable().filter(pk=team.pk).exists():
+            return team
+
+        serializers.ValidationError("Please select a valid Team")
 
 
 class LanguageSerializer(BaseSerializer):
