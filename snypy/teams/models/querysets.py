@@ -7,7 +7,7 @@ class TeamQuerySet(BaseQuerySet):
 
     def viewable(self):
         user = get_current_user()
-        return self.filter(user_teams__user=user)
+        return self.filter(user_teams__user=user).distinct()
 
 
 class UserTeamQuerySet(BaseQuerySet):

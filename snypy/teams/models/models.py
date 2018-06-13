@@ -82,3 +82,8 @@ class UserTeam(BaseModel, DateModelMixin):
         null=False,
         blank=False,
     )
+
+    class Meta:
+        unique_together=(
+            ('user', 'team', )
+        )
