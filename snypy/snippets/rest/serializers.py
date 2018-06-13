@@ -1,7 +1,9 @@
+from rest_framework import serializers
 from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.fields import SerializerMethodField, IntegerField
 
 from core.rest.serializers import BaseSerializer
+from teams.models import Team
 from ..models import Snippet, File, Label, Language, SnippetLabel, Extension
 
 
@@ -41,6 +43,7 @@ class SnippetSerializer(BaseSerializer):
             'modified_date',
             'labels',
             'files',
+            'team',
         )
 
     def get_user_display(self, obj):
@@ -82,6 +85,15 @@ class SnippetSerializer(BaseSerializer):
         # Update existing files
         for file in files_to_update:
             instance.files.filter(pk=file.pop('pk')).update(**file)
+
+    def validate_team(self, team):
+        if team is None:
+            return
+
+        if Team.objects.viewable().filter(pk=team.pk).exists():
+            return team
+
+        serializers.ValidationError("Please select a valid Team")
 
 
 class FileSerializer(BaseSerializer):
