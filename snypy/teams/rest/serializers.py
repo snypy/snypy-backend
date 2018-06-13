@@ -1,4 +1,4 @@
-from rest_framework.relations import PrimaryKeyRelatedField
+from rest_framework.fields import SerializerMethodField
 
 from core.rest.serializers import BaseSerializer
 from ..models import Team, UserTeam
@@ -19,6 +19,7 @@ class TeamSerializer(BaseSerializer):
 
 
 class UserTeamSerializer(BaseSerializer):
+    user_display = SerializerMethodField()
 
     class Meta:
         model = UserTeam
@@ -29,4 +30,9 @@ class UserTeamSerializer(BaseSerializer):
             'team',
             'created_date',
             'modified_date',
+            'user_display',
         )
+
+    def get_user_display(self, obj):
+        if obj.user:
+            return obj.user.username
