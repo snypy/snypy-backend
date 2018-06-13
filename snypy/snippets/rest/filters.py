@@ -53,9 +53,17 @@ class SnippetFilter(django_filters.FilterSet):
 
 class LabelFilter(django_filters.FilterSet):
 
+    user = django_filters.NumberFilter(method='filter_user', label="User", )
+
     class Meta:
         model = Label
         fields = [
             'user',
             'team',
         ]
+
+    def filter_user(self, queryset, name, value):
+        return queryset.filter(
+            user=value,
+            team=None,
+        )
