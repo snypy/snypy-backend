@@ -15,9 +15,11 @@ class FileFilter(django_filters.FilterSet):
 
 class SnippetFilter(django_filters.FilterSet):
 
-    favorite = django_filters.BooleanFilter(method='is_favorite', label="Is favorite?", )
+    favorite = django_filters.BooleanFilter(method='filter_is_favorite', label="Is favorite?", )
 
-    labeled = django_filters.BooleanFilter(method='is_labeled', label="Is labeled?", )
+    labeled = django_filters.BooleanFilter(method='filter_is_labeled', label="Is labeled?", )
+
+    user = django_filters.NumberFilter(method='filter_user', label="User", )
 
     # ToDo: Add after shares app
     # shared_to = django_filters.NumberFilter(field_name="shared__user")
@@ -33,14 +35,20 @@ class SnippetFilter(django_filters.FilterSet):
             'team',
         ]
 
-    def is_favorite(self, queryset, name, value):
+    def filter_is_favorite(self, queryset, name, value):
         pass
 
-    def is_labeled(self, queryset, name, value):
+    def filter_is_labeled(self, queryset, name, value):
         if value:
             return queryset.exclude(labels=None)
 
         return queryset.filter(labels=None)
+
+    def filter_user(self, queryset, name, value):
+        return queryset.filter(
+            user=value,
+            team=None,
+        )
 
 
 class LabelFilter(django_filters.FilterSet):
