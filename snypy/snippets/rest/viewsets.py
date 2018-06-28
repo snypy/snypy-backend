@@ -1,7 +1,7 @@
 from core.rest.viewsets import BaseModelViewSet
 
 from ..models import Snippet, File, Label, Language, SnippetLabel, Extension
-from .filters import FileFilter, SnippetFilter, LabelFilter
+from .filters import FileFilter, SnippetFilter, LabelFilter, SnippetLabelFilter
 from .serializers import SnippetSerializer, FileSerializer, LabelSerializer, LanguageSerializer, \
     SnippetLabelSerializer, ExtensionSerializer
 
@@ -36,6 +36,7 @@ class LanguageViewSet(BaseModelViewSet):
 class SnippetLabelViewSet(BaseModelViewSet):
     queryset = SnippetLabel.objects.all()
     serializer_class = SnippetLabelSerializer
+    filter_class = SnippetLabelFilter
 
 
 class ExtensionViewSet(BaseModelViewSet):
