@@ -19,7 +19,7 @@ class SnippetFilter(django_filters.FilterSet):
 
     labeled = django_filters.BooleanFilter(method='filter_is_labeled', label="Is labeled?", )
 
-    user = django_filters.NumberFilter(method='filter_user', label="User", )
+    team_is_null = django_filters.BooleanFilter(method='filter_team_is_null', label="Team is None", )
 
     # ToDo: Add after shares app
     # shared_to = django_filters.NumberFilter(field_name="shared__user")
@@ -44,10 +44,9 @@ class SnippetFilter(django_filters.FilterSet):
 
         return queryset.filter(labels=None)
 
-    def filter_user(self, queryset, name, value):
+    def filter_team_is_null(self, queryset, name, value):
         return queryset.filter(
-            user=value,
-            team=None,
+            team__isnull=value,
         )
 
 
