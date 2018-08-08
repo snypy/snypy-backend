@@ -1,4 +1,4 @@
-from rest_framework.fields import SerializerMethodField
+from rest_framework.fields import SerializerMethodField, IntegerField
 
 from core.rest.serializers import BaseSerializer
 from ..models import Team, UserTeam
@@ -20,6 +20,7 @@ class TeamSerializer(BaseSerializer):
 
 class UserTeamSerializer(BaseSerializer):
     user_display = SerializerMethodField()
+    snippet_count = IntegerField(read_only=True, required=False)
 
     class Meta:
         model = UserTeam
@@ -31,6 +32,7 @@ class UserTeamSerializer(BaseSerializer):
             'created_date',
             'modified_date',
             'user_display',
+            'snippet_count',
         )
 
     def get_user_display(self, obj):

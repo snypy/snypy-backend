@@ -1,4 +1,7 @@
+from django.db.models import Count, When, Case, CharField, F, OuterRef, Subquery
+
 from core.rest.viewsets import BaseModelViewSet
+from snippets.models import Snippet
 
 from ..models import Team, UserTeam
 from .filters import UserTeamFilter
@@ -14,3 +17,12 @@ class UserTeamViewSet(BaseModelViewSet):
     queryset = UserTeam.objects.all()
     serializer_class = UserTeamSerializer
     filter_class = UserTeamFilter
+
+    def get_queryset(self):
+        viewable_snippets = Snippet.objects.viewable().filter(team=OuterRef('team')).values('pk')
+
+        return self.queryset.viewable().annotate(
+            snippet_count=Count(
+                Subquery(viewable_snippets)
+            )
+        )

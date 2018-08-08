@@ -115,19 +115,19 @@ class FileSerializer(BaseSerializer):
 
 
 class LabelSerializer(BaseSerializer):
-    snippets = PrimaryKeyRelatedField(many=True, read_only=True)
+    snippet_count = IntegerField(read_only=True, required=False)
 
     class Meta:
         model = Label
         fields = (
             'pk',
             'url',
-            'snippets',
             'name',
             'user',
             'created_date',
             'modified_date',
             'team',
+            'snippet_count',
         )
 
     def validate_team(self, team):
@@ -141,12 +141,15 @@ class LabelSerializer(BaseSerializer):
 
 
 class LanguageSerializer(BaseSerializer):
+    snippet_count = IntegerField(read_only=True, required=False)
+
     class Meta:
         model = Language
         fields = (
             'pk',
             'url',
             'name',
+            'snippet_count',
         )
 
 
