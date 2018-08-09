@@ -3,6 +3,7 @@ from django.db import models
 from django.conf import settings
 
 from django_userforeignkey.models.fields import UserForeignKey
+from django_userforeignkey.request import get_current_user
 
 from core.models import BaseModel, DateModelMixin
 from .managers import TeamManager, UserTeamManger
@@ -38,7 +39,7 @@ class Team(BaseModel, DateModelMixin):
             super().save(*args, **kwargs)
 
             UserTeam.objects.create(
-                user=User.objects.first(),  # ToDo: User current user
+                user=get_current_user(),
                 team=self,
                 role=UserTeam.ROLE_EDITOR
             )
