@@ -1,12 +1,15 @@
-from django.db.models import Count, CharField, IntegerField, When, Case, Q
+from django.db.models import Count, CharField, When, Case, Q
 
 from core.rest.viewsets import BaseModelViewSet
-from teams.models import Team
+from teams.models import Team, get_user_model
 
 from ..models import Snippet, File, Label, Language, SnippetLabel, Extension
 from .filters import FileFilter, SnippetFilter, LabelFilter, SnippetLabelFilter
 from .serializers import SnippetSerializer, FileSerializer, LabelSerializer, LanguageSerializer, \
     SnippetLabelSerializer, ExtensionSerializer
+
+
+User = get_user_model()
 
 
 class SnippetViewSet(BaseModelViewSet):
@@ -50,20 +53,23 @@ class LanguageViewSet(BaseModelViewSet):
     def get_queryset(self):
         viewable_snippets = Snippet.objects.viewable().values_list('pk', flat=True)
 
-        team = None
+        query = Q(files__snippet__in=viewable_snippets)
+
         if 'team' in self.request.query_params:
             team = Team.objects.get(pk=self.request.query_params['team'])
+            query &= Q(files__snippet__team=team)
+
+        if 'user' in self.request.query_params:
+            user = User.objects.get(pk=self.request.query_params['user'])
+            query &= Q(
+                files__snippet__user=user,
+                files__snippet__team=None,
+            )
 
         return self.queryset.viewable().annotate(
             snippet_count=Count(
                 Case(
-                    When(
-                        Q(
-                            files__snippet__in=viewable_snippets,
-                            files__snippet__team=team
-                        ),
-                        then=1
-                    ),
+                    When(query, then=1),
                     output_field=CharField(),
                 )
             )
