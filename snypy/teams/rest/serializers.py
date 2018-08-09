@@ -29,6 +29,7 @@ class UserTeamSerializer(BaseSerializer):
             'url',
             'user',
             'team',
+            'role',
             'created_date',
             'modified_date',
             'user_display',
