@@ -52,39 +52,41 @@ class SnippetSerializer(BaseSerializer):
 
     def save(self):
         # Extract nested fields
-        labels = self.validated_data.pop('labels')
-        files = self.validated_data.pop('files')
+        labels = self.validated_data.pop('labels') if 'labels' in self.validated_data else None
+        files = self.validated_data.pop('files') if 'files' in self.validated_data else None
 
         # Save instance
         instance = super(SnippetSerializer, self).save()
 
         # Save labels
-        self.instance.labels.clear()
-        labels_to_add = []
-        for label in labels:
-            labels_to_add.append(SnippetLabel(label=label, snippet=self.instance))
-        SnippetLabel.objects.bulk_create(labels_to_add)
+        if labels:
+            self.instance.labels.clear()
+            labels_to_add = []
+            for label in labels:
+                labels_to_add.append(SnippetLabel(label=label, snippet=self.instance))
+            SnippetLabel.objects.bulk_create(labels_to_add)
 
-        files_to_add = []
-        files_to_update = []
-        for file in files:
-            if 'pk' in file and file['pk'] is not None:
-                files_to_update.append(file)
-            else:
-                file['snippet'] = instance
-                files_to_add.append(
-                    File(**file)
-                )
+        if files:
+            files_to_add = []
+            files_to_update = []
+            for file in files:
+                if 'pk' in file and file['pk'] is not None:
+                    files_to_update.append(file)
+                else:
+                    file['snippet'] = instance
+                    files_to_add.append(
+                        File(**file)
+                    )
 
-        # Delete old files
-        instance.files.exclude(pk__in=[file['pk'] for file in files_to_update]).delete()
+            # Delete old files
+            instance.files.exclude(pk__in=[file['pk'] for file in files_to_update]).delete()
 
-        # Add new files
-        instance.files.bulk_create(files_to_add)
+            # Add new files
+            instance.files.bulk_create(files_to_add)
 
-        # Update existing files
-        for file in files_to_update:
-            instance.files.filter(pk=file.pop('pk')).update(**file)
+            # Update existing files
+            for file in files_to_update:
+                instance.files.filter(pk=file.pop('pk')).update(**file)
 
     def validate_team(self, team):
         if team is None:
