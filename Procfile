@@ -1,0 +1,1 @@
+web: cd snypy && python manage.py migrate && gunicorn snypy.wsgi --log-file -

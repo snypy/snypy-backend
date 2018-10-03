@@ -4,3 +4,4 @@
 /.idea/*
 /.vscode/*
 *db.sqlite3
+/snypy/staticfiles

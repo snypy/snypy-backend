@@ -1,0 +1,16 @@
+---
+applications:
+- name: cf-snypy-api
+  instances: 1
+  random-route: false
+  buildpack: python_buildpack
+  memory: 128M
+  disk_quota: 512M
+
+- name: cf-snypy-api-static
+  instances: 1
+  random-route: false
+  buildpack: staticfile_buildpack
+  memory: 16M
+  disk_quota: 32M
+  path: snypy/staticfiles
