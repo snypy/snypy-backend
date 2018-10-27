@@ -1,35 +1,13 @@
 import json
 
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
 from django.urls import reverse
 
-from django_rest_multitokenauth.models import MultiToken
-from rest_framework.test import APITestCase
-
+from core.tests import BaseAPITestCase
 from snippets.models import Snippet
 
-User = get_user_model()
 
-
-class BaseAPIViewTestCase(APITestCase):
-
-    def setUp(self):
-        self.password = "you_cannot_read_this"
-        self.user1 = User.objects.create_user("user1", "user1@test.com", self.password)
-        self.user2 = User.objects.create_user("user2", "user2@test.com", self.password)
-        self.user3 = User.objects.create_user("user3", "user3@test.com", self.password)
-
-        self.token1 = MultiToken.objects.create(user=self.user1)
-        self.token2 = MultiToken.objects.create(user=self.user2)
-
-        self.api_authentication(self.token1)
-
-    def api_authentication(self, token):
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
-
-
-class SnippetListAPIViewTestCase(BaseAPIViewTestCase):
+class SnippetListAPIViewTestCase(BaseAPITestCase):
 
     url = reverse("snippet-list")
 
@@ -61,7 +39,7 @@ class SnippetListAPIViewTestCase(BaseAPIViewTestCase):
         self.assertTrue(len(json.loads(response.content)) == snippet_count)
 
 
-class SnippetListAPICreateTestCase(BaseAPIViewTestCase):
+class SnippetListAPICreateTestCase(BaseAPITestCase):
 
     url = reverse("snippet-list")
     create_data = {
@@ -122,7 +100,7 @@ class SnippetListAPICreateTestCase(BaseAPIViewTestCase):
         self.assert_create_response(response)
 
 
-class SnippetDetailAPIViewTestCase(BaseAPIViewTestCase):
+class SnippetDetailAPIViewTestCase(BaseAPITestCase):
 
     def setUp(self):
         super().setUp()
@@ -161,7 +139,7 @@ class SnippetDetailAPIViewTestCase(BaseAPIViewTestCase):
         self.assertEqual(Snippet.objects.count(), snippet_count)
 
 
-class SnippetDetailAPIUpdateTestCase(BaseAPIViewTestCase):
+class SnippetDetailAPIUpdateTestCase(BaseAPITestCase):
 
     def setUp(self):
         super().setUp()
@@ -243,7 +221,7 @@ class SnippetDetailAPIUpdateTestCase(BaseAPIViewTestCase):
         self.assertEqual(Snippet.objects.count(), snippet_count)
 
 
-class SnippetDetailAPIDeleteTestCase(BaseAPIViewTestCase):
+class SnippetDetailAPIDeleteTestCase(BaseAPITestCase):
     
     def setUp(self):
         super().setUp()

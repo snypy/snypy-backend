@@ -37,12 +37,14 @@ class Team(BaseModel, DateModelMixin):
     def save(self, *args, **kwargs):
         if self.pk is None:
             super().save(*args, **kwargs)
+            user = get_current_user()
 
-            UserTeam.objects.create(
-                user=get_current_user(),
-                team=self,
-                role=UserTeam.ROLE_EDITOR
-            )
+            if not user.is_anonymous:
+                UserTeam.objects.create(
+                    user=get_current_user(),
+                    team=self,
+                    role=UserTeam.ROLE_EDITOR
+                )
         else:
             super().save(*args, **kwargs)
 
