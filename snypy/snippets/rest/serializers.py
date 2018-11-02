@@ -3,7 +3,7 @@ from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.fields import SerializerMethodField, IntegerField
 
 from core.rest.serializers import BaseSerializer
-from teams.models import Team
+from teams.models import Team, get_current_user, UserTeam
 from ..models import Snippet, File, Label, Language, SnippetLabel, Extension
 
 
@@ -93,9 +93,14 @@ class SnippetSerializer(BaseSerializer):
             return
 
         if Team.objects.viewable().filter(pk=team.pk).exists():
-            return team
+            if UserTeam.objects.filter(
+                    team=team,
+                    user=get_current_user(),
+                    role__in=[UserTeam.ROLE_CONTRIBUTOR, UserTeam.ROLE_EDITOR]
+            ).exists():
+                return team
 
-        serializers.ValidationError("Please select a valid Team")
+        raise serializers.ValidationError("Please select a valid Team")
 
 
 class FileSerializer(BaseSerializer):
@@ -139,7 +144,7 @@ class LabelSerializer(BaseSerializer):
         if Team.objects.viewable().filter(pk=team.pk).exists():
             return team
 
-        serializers.ValidationError("Please select a valid Team")
+        raise serializers.ValidationError("Please select a valid Team")
 
 
 class LanguageSerializer(BaseSerializer):

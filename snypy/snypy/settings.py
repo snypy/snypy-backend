@@ -125,7 +125,7 @@ REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissions'
+        'core.rest.permissions.BaseModelPermissions'
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'django_rest_multitokenauth.coreauthentication.MultiTokenAuthentication',

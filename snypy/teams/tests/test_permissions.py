@@ -276,14 +276,14 @@ class TeamSnippetDetailAPIEditTestCase(BaseTeamApiTestCase):
         UserTeam.objects.create(team=self.team1, user=self.user2, role=UserTeam.ROLE_SUBSCRIBER)
 
         response = self.client.patch(self.url, self.patch_data)
-        self.assertEquals(response.status_code, 404)
+        self.assertEquals(response.status_code, 403)
 
     def test_team_snippet_other_user_assigned_as_contributor(self):
         self.api_authentication(self.token2)
         UserTeam.objects.create(team=self.team1, user=self.user2, role=UserTeam.ROLE_CONTRIBUTOR)
 
         response = self.client.patch(self.url, self.patch_data)
-        self.assertEquals(response.status_code, 404)
+        self.assertEquals(response.status_code, 403)
 
     def test_team_snippet_other_user_assigned_as_editor(self):
         self.api_authentication(self.token2)
@@ -321,14 +321,14 @@ class TeamSnippetDetailAPIDeleteTestCase(BaseTeamApiTestCase):
         UserTeam.objects.create(team=self.team1, user=self.user2, role=UserTeam.ROLE_SUBSCRIBER)
 
         response = self.client.delete(self.url)
-        self.assertEquals(response.status_code, 404)
+        self.assertEquals(response.status_code, 403)
 
     def test_team_snippet_other_user_assigned_as_contributor(self):
         self.api_authentication(self.token2)
         UserTeam.objects.create(team=self.team1, user=self.user2, role=UserTeam.ROLE_CONTRIBUTOR)
 
         response = self.client.delete(self.url)
-        self.assertEquals(response.status_code, 404)
+        self.assertEquals(response.status_code, 403)
 
     def test_team_snippet_other_user_assigned_as_editor(self):
         self.api_authentication(self.token2)

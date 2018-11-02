@@ -6,19 +6,7 @@ from core.models.querysets import BaseQuerySet
 
 class SnippetQuerySet(BaseQuerySet):
 
-    def viewable(self):
-        from teams.models import UserTeam
-        user = get_current_user()
-
-        return self.filter(
-            Q(
-                user=user,
-            ) | Q(
-                team__in=UserTeam.objects.filter(user=user).values_list('team', flat=True)
-            )
-        )
-
-    def editable(self):
+    def _filter_by_roles(self, roles):
         from teams.models import UserTeam
         user = get_current_user()
 
@@ -28,10 +16,30 @@ class SnippetQuerySet(BaseQuerySet):
             ) | Q(
                 team__in=UserTeam.objects.filter(
                     user=user,
-                    role__in=[UserTeam.ROLE_CONTRIBUTOR, UserTeam.ROLE_EDITOR],
+                    role__in=roles,
                 ).values_list('team', flat=True)
             )
         )
+
+    def viewable(self):
+        from teams.models import UserTeam
+        return self._filter_by_roles([
+            UserTeam.ROLE_SUBSCRIBER,
+            UserTeam.ROLE_CONTRIBUTOR,
+            UserTeam.ROLE_EDITOR
+        ])
+
+    def editable(self):
+        from teams.models import UserTeam
+        return self._filter_by_roles([
+            UserTeam.ROLE_EDITOR
+        ])
+
+    def deletable(self):
+        from teams.models import UserTeam
+        return self._filter_by_roles([
+            UserTeam.ROLE_EDITOR
+        ])
 
 
 class FileQuerySet(BaseQuerySet):
