@@ -27,7 +27,7 @@ class SnippetFileSerializer(BaseSerializer):
 class SnippetSerializer(BaseSerializer):
     user_display = SerializerMethodField()
     labels = PrimaryKeyRelatedField(many=True, read_only=False, queryset=Label.objects.all(), required=False)
-    files = SnippetFileSerializer(File.objects.none(), many=True)
+    files = SnippetFileSerializer(File.objects.none(), many=True, required=False)
 
     class Meta:
         model = Snippet

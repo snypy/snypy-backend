@@ -336,3 +336,48 @@ class TeamSnippetDetailAPIDeleteTestCase(BaseTeamApiTestCase):
 
         response = self.client.delete(self.url)
         self.assertEquals(response.status_code, 204)
+
+
+"""
+ToDo: Implement tests
+"""
+
+
+class TeamListAPIViewTestCase(BaseAPITestCase):
+    pass
+
+
+class TeamListAPICreateTestCase(BaseAPITestCase):
+    pass
+
+
+class TeamDetailAPIViewTestCase(BaseAPITestCase):
+    pass
+
+
+class TeamDetailAPIUpdateTestCase(BaseAPITestCase):
+    pass
+
+
+class TeamDetailAPIDeleteTestCase(BaseAPITestCase):
+    pass
+
+
+class TeamUserListAPIViewTestCase(BaseAPITestCase):
+    pass
+
+
+class TeamUserListAPICreateTestCase(BaseAPITestCase):
+    pass
+
+
+class TeamUserDetailAPIViewTestCase(BaseAPITestCase):
+    pass
+
+
+class TeamUserDetailAPIUpdateTestCase(BaseAPITestCase):
+    pass
+
+
+class TeamUserDetailAPIDeleteTestCase(BaseAPITestCase):
+    pass

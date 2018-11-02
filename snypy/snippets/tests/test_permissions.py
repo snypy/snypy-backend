@@ -38,6 +38,11 @@ class SnippetListAPIViewTestCase(BaseAPITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(len(json.loads(response.content)) == snippet_count)
 
+    def test_no_permission(self):
+        self.api_authentication(self.token2)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 403)
+
 
 class SnippetListAPICreateTestCase(BaseAPITestCase):
 
@@ -99,6 +104,11 @@ class SnippetListAPICreateTestCase(BaseAPITestCase):
         response = self.client.post(self.url, create_data)
         self.assert_create_response(response)
 
+    def test_no_permission(self):
+        self.api_authentication(self.token2)
+        response =  self.client.post(self.url, {})
+        self.assertEqual(response.status_code, 403)
+
 
 class SnippetDetailAPIViewTestCase(BaseAPITestCase):
 
@@ -108,16 +118,17 @@ class SnippetDetailAPIViewTestCase(BaseAPITestCase):
             Permission.objects.get(codename='view_snippet'),
         )
 
+        self.snippet = Snippet.objects.create(user=self.user1, title="Python snippet")
+        self.url = reverse("snippet-detail", kwargs={'pk': self.snippet.pk})
+        self.snippet_count = Snippet.objects.count()
+
     def test_user_snippet(self):
         """
         User should see snippets that are assigned to him
         """
-        snippet = Snippet.objects.create(user=self.user1, title="Python snippet")
-        snippet_count = Snippet.objects.count()
-
-        response = self.client.get(reverse("snippet-detail", kwargs={'pk': snippet.pk}))
+        response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(Snippet.objects.count(), snippet_count)
+        self.assertEqual(Snippet.objects.count(), self.snippet_count)
 
         self.assertEqual(response.data['title'], "Python snippet")
         self.assertEqual(response.data['user'], self.user1.pk)
@@ -132,11 +143,19 @@ class SnippetDetailAPIViewTestCase(BaseAPITestCase):
         """
         User should not see snippets that are not assigned to him
         """
-        snippet = Snippet.objects.create(user=self.user2, title="Python snippet")
-        snippet_count = Snippet.objects.count()
-        response = self.client.get(reverse("snippet-detail", kwargs={'pk': snippet.pk}))
+        self.snippet.user = self.user2
+        self.snippet.save()
+
+        response = self.client.get(self.url)
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(Snippet.objects.count(), snippet_count)
+        self.assertEqual(Snippet.objects.count(), self.snippet_count)
+
+    def test_no_permission(self):
+        self.api_authentication(self.token2)
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(Snippet.objects.count(), self.snippet_count)
 
 
 class SnippetDetailAPIUpdateTestCase(BaseAPITestCase):
@@ -147,19 +166,20 @@ class SnippetDetailAPIUpdateTestCase(BaseAPITestCase):
             Permission.objects.get(codename='change_snippet'),
         )
 
-    def test_user_snippet(self):
-        snippet = Snippet.objects.create(user=self.user1, title="Python snippet")
-        snippet_count = Snippet.objects.count()
+        self.snippet = Snippet.objects.create(user=self.user1, title="Python snippet")
+        self.url = reverse("snippet-detail", kwargs={'pk': self.snippet.pk})
+        self.snippet_count = Snippet.objects.count()
 
+    def test_user_snippet(self):
         response = self.client.put(
-            reverse("snippet-detail", kwargs={'pk': snippet.pk}),
+            self.url,
             {
                 'title': 'Python snippet update 1',
                 'description': 'Update description',
             }
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(Snippet.objects.count(), snippet_count)
+        self.assertEqual(Snippet.objects.count(), self.snippet_count)
 
         self.assertEqual(response.data['title'], "Python snippet update 1")
         self.assertEqual(response.data['user'], self.user1.pk)
@@ -171,22 +191,22 @@ class SnippetDetailAPIUpdateTestCase(BaseAPITestCase):
         self.assertListEqual(response.data['labels'], [])
 
         response = self.client.put(
-            reverse("snippet-detail", kwargs={'pk': snippet.pk}),
+            self.url,
             {
                 'description': 'Update description only',
             }
         )
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(Snippet.objects.count(), snippet_count)
+        self.assertEqual(Snippet.objects.count(), self.snippet_count)
 
         response = self.client.patch(
-            reverse("snippet-detail", kwargs={'pk': snippet.pk}),
+            self.url,
             {
                 'description': 'Update description only',
             }
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(Snippet.objects.count(), snippet_count)
+        self.assertEqual(Snippet.objects.count(), self.snippet_count)
 
         self.assertEqual(response.data['title'], "Python snippet update 1")
         self.assertEqual(response.data['user'], self.user1.pk)
@@ -198,27 +218,38 @@ class SnippetDetailAPIUpdateTestCase(BaseAPITestCase):
         self.assertListEqual(response.data['labels'], [])
     
     def test_foreign_user_snippet(self):
-        snippet = Snippet.objects.create(user=self.user2, title="Python snippet")
-        snippet_count = Snippet.objects.count()
+        self.snippet.user = self.user2
+        self.snippet.save()
 
         response = self.client.put(
-            reverse("snippet-detail", kwargs={'pk': snippet.pk}),
+            self.url,
             {
                 'title': 'Python snippet update 1',
                 'description': 'Update description',
             }
         )
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(Snippet.objects.count(), snippet_count)
+        self.assertEqual(Snippet.objects.count(), self.snippet_count)
         
         response = self.client.patch(
-            reverse("snippet-detail", kwargs={'pk': snippet.pk}),
+            self.url,
             {
                 'description': 'Update description only',
             }
         )
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(Snippet.objects.count(), snippet_count)
+        self.assertEqual(Snippet.objects.count(), self.snippet_count)
+
+    def test_no_permission(self):
+        self.api_authentication(self.token2)
+
+        response = self.client.put(self.url, {})
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(Snippet.objects.count(), self.snippet_count)
+
+        response = self.client.patch(self.url, {})
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(Snippet.objects.count(), self.snippet_count)
 
 
 class SnippetDetailAPIDeleteTestCase(BaseAPITestCase):
@@ -229,18 +260,26 @@ class SnippetDetailAPIDeleteTestCase(BaseAPITestCase):
             Permission.objects.get(codename='delete_snippet'),
         )
 
-    def test_user_snippet(self):
-        snippet = Snippet.objects.create(user=self.user1, title="Python snippet")
-        snippet_count = Snippet.objects.count()
+        self.snippet = Snippet.objects.create(user=self.user1, title="Python snippet")
+        self.url = reverse("snippet-detail", kwargs={'pk': self.snippet.pk})
+        self.snippet_count = Snippet.objects.count()
 
-        response = self.client.delete(reverse("snippet-detail", kwargs={'pk': snippet.pk}))
+    def test_user_snippet(self):
+        response = self.client.delete(self.url)
         self.assertEqual(response.status_code, 204)
-        self.assertEqual(Snippet.objects.count(), snippet_count - 1)
+        self.assertEqual(Snippet.objects.count(), self.snippet_count - 1)
     
     def test_foreign_user_snippet(self):
-        snippet = Snippet.objects.create(user=self.user2, title="Python snippet")
-        snippet_count = Snippet.objects.count()
+        self.snippet.user = self.user2
+        self.snippet.save()
 
-        response = self.client.delete(reverse("snippet-detail", kwargs={'pk': snippet.pk}))
+        response = self.client.delete(self.url)
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(Snippet.objects.count(), snippet_count)
+        self.assertEqual(Snippet.objects.count(), self.snippet_count)
+
+    def test_no_permission(self):
+        self.api_authentication(self.token2)
+
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(Snippet.objects.count(), self.snippet_count)
