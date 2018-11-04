@@ -20,23 +20,25 @@ class SnippetListAPIViewTestCase(BaseAPITestCase):
 
     def test_user_snippet(self):
         """
-        User should see snippets that are assigned to him
+        User can see his own snippets
         """
         snippet_count = Snippet.objects.count()
         Snippet.objects.create(user=self.user1, title="Python snippet")
+
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(len(json.loads(response.content)) == snippet_count + 1)
+        self.assertEqual(len(json.loads(response.content)), snippet_count + 1)
 
-    def test_foreign_user_snippet(self):
+    def test_foreign_snippet(self):
         """
-        User should not see snippets that are not assigned to him
+        User cannot see snippets of other users
         """
         snippet_count = Snippet.objects.count()
         Snippet.objects.create(user=self.user2, title="Python snippet")
+
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(len(json.loads(response.content)) == snippet_count)
+        self.assertEqual(len(json.loads(response.content)), snippet_count)
 
     def test_no_permission(self):
         self.api_authentication(self.token2)
@@ -106,21 +108,25 @@ class SnippetListAPICreateTestCase(BaseAPITestCase):
 
     def test_no_permission(self):
         self.api_authentication(self.token2)
-        response =  self.client.post(self.url, {})
+        response =  self.client.post(self.url, self.create_data)
         self.assertEqual(response.status_code, 403)
 
 
-class SnippetDetailAPIViewTestCase(BaseAPITestCase):
+class SnippetDetailAPIVBaseTestCase(BaseAPITestCase):
+    def setUp(self):
+        super().setUp()
+        self.snippet = Snippet.objects.create(user=self.user1, title="Python snippet")
+        self.url = reverse("snippet-detail", kwargs={'pk': self.snippet.pk})
+        self.snippet_count = Snippet.objects.count()
+
+
+class SnippetDetailAPIViewTestCase(SnippetDetailAPIVBaseTestCase):
 
     def setUp(self):
         super().setUp()
         self.user1.user_permissions.add(
             Permission.objects.get(codename='view_snippet'),
         )
-
-        self.snippet = Snippet.objects.create(user=self.user1, title="Python snippet")
-        self.url = reverse("snippet-detail", kwargs={'pk': self.snippet.pk})
-        self.snippet_count = Snippet.objects.count()
 
     def test_user_snippet(self):
         """
@@ -158,17 +164,13 @@ class SnippetDetailAPIViewTestCase(BaseAPITestCase):
         self.assertEqual(Snippet.objects.count(), self.snippet_count)
 
 
-class SnippetDetailAPIUpdateTestCase(BaseAPITestCase):
+class SnippetDetailAPIUpdateTestCase(SnippetDetailAPIVBaseTestCase):
 
     def setUp(self):
         super().setUp()
         self.user1.user_permissions.add(
             Permission.objects.get(codename='change_snippet'),
         )
-
-        self.snippet = Snippet.objects.create(user=self.user1, title="Python snippet")
-        self.url = reverse("snippet-detail", kwargs={'pk': self.snippet.pk})
-        self.snippet_count = Snippet.objects.count()
 
     def test_user_snippet(self):
         response = self.client.put(
@@ -252,17 +254,13 @@ class SnippetDetailAPIUpdateTestCase(BaseAPITestCase):
         self.assertEqual(Snippet.objects.count(), self.snippet_count)
 
 
-class SnippetDetailAPIDeleteTestCase(BaseAPITestCase):
+class SnippetDetailAPIDeleteTestCase(SnippetDetailAPIVBaseTestCase):
     
     def setUp(self):
         super().setUp()
         self.user1.user_permissions.add(
             Permission.objects.get(codename='delete_snippet'),
         )
-
-        self.snippet = Snippet.objects.create(user=self.user1, title="Python snippet")
-        self.url = reverse("snippet-detail", kwargs={'pk': self.snippet.pk})
-        self.snippet_count = Snippet.objects.count()
 
     def test_user_snippet(self):
         response = self.client.delete(self.url)

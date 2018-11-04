@@ -100,7 +100,7 @@ class SnippetSerializer(BaseSerializer):
             ).exists():
                 return team
 
-        raise serializers.ValidationError("Please select a valid Team")
+        raise serializers.ValidationError("You cannot add users to this team")
 
 
 class FileSerializer(BaseSerializer):
