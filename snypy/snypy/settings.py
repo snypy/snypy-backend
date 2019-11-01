@@ -139,6 +139,6 @@ REST_FRAMEWORK = {
 
 # CORS
 CORS_ORIGIN_WHITELIST = (
-    'localhost:4200',
+    'http://localhost:4200',
 )
 CORS_ALLOW_CREDENTIALS = True
