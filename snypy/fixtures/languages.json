@@ -1,0 +1,175 @@
+[
+{
+    "model": "snippets.language",
+    "pk": 1,
+    "fields": {
+        "name": "python"
+    }
+},
+{
+    "model": "snippets.language",
+    "pk": 2,
+    "fields": {
+        "name": "php"
+    }
+},
+{
+    "model": "snippets.language",
+    "pk": 3,
+    "fields": {
+        "name": "css"
+    }
+},
+{
+    "model": "snippets.language",
+    "pk": 4,
+    "fields": {
+        "name": "html"
+    }
+},
+{
+    "model": "snippets.language",
+    "pk": 5,
+    "fields": {
+        "name": "text"
+    }
+},
+{
+    "model": "snippets.language",
+    "pk": 6,
+    "fields": {
+        "name": "typescript"
+    }
+},
+{
+    "model": "snippets.language",
+    "pk": 7,
+    "fields": {
+        "name": "javascript"
+    }
+},
+{
+    "model": "snippets.language",
+    "pk": 8,
+    "fields": {
+        "name": "sh"
+    }
+},
+{
+    "model": "snippets.language",
+    "pk": 9,
+    "fields": {
+        "name": "markdown"
+    }
+},
+{
+    "model": "snippets.language",
+    "pk": 10,
+    "fields": {
+        "name": "yaml"
+    }
+},
+{
+    "model": "snippets.language",
+    "pk": 11,
+    "fields": {
+        "name": "json"
+    }
+},
+{
+    "model": "snippets.extension",
+    "pk": 1,
+    "fields": {
+        "language": 1,
+        "name": "py"
+    }
+},
+{
+    "model": "snippets.extension",
+    "pk": 2,
+    "fields": {
+        "language": 2,
+        "name": "php"
+    }
+},
+{
+    "model": "snippets.extension",
+    "pk": 3,
+    "fields": {
+        "language": 3,
+        "name": "css"
+    }
+},
+{
+    "model": "snippets.extension",
+    "pk": 4,
+    "fields": {
+        "language": 4,
+        "name": "html"
+    }
+},
+{
+    "model": "snippets.extension",
+    "pk": 5,
+    "fields": {
+        "language": 4,
+        "name": "htm"
+    }
+},
+{
+    "model": "snippets.extension",
+    "pk": 6,
+    "fields": {
+        "language": 5,
+        "name": "txt"
+    }
+},
+{
+    "model": "snippets.extension",
+    "pk": 7,
+    "fields": {
+        "language": 10,
+        "name": "yml"
+    }
+},
+{
+    "model": "snippets.extension",
+    "pk": 8,
+    "fields": {
+        "language": 6,
+        "name": "ts"
+    }
+},
+{
+    "model": "snippets.extension",
+    "pk": 9,
+    "fields": {
+        "language": 7,
+        "name": "js"
+    }
+},
+{
+    "model": "snippets.extension",
+    "pk": 10,
+    "fields": {
+        "language": 8,
+        "name": "sh"
+    }
+},
+{
+    "model": "snippets.extension",
+    "pk": 11,
+    "fields": {
+        "language": 9,
+        "name": "md"
+    }
+},
+{
+    "model": "snippets.extension",
+    "pk": 12,
+    "fields": {
+        "language": 11,
+        "name": "json"
+    }
+}
+]
