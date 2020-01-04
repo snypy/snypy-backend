@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_userforeignkey',
     'django_filters',
+    'rest_registration',
 
     # local
     'snippets',
@@ -142,3 +143,24 @@ CORS_ORIGIN_WHITELIST = (
     'http://localhost:4200',
 )
 CORS_ALLOW_CREDENTIALS = True
+
+
+REST_REGISTRATION = {
+    'REGISTER_VERIFICATION_ENABLED': True,
+    'RESET_PASSWORD_VERIFICATION_ENABLED': False,
+    'REGISTER_EMAIL_VERIFICATION_ENABLED': False,
+
+    'REGISTER_VERIFICATION_URL': 'https://localhost:4200/verify-user/',
+    'RESET_PASSWORD_VERIFICATION_URL': 'https://localhost:4200/reset-password/',
+    'REGISTER_EMAIL_VERIFICATION_URL': 'https://localhost:4200/verify-email/',
+
+    'VERIFICATION_FROM_EMAIL': 'no-reply@snypy.com',
+}
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 1025
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_USE_TLS = False

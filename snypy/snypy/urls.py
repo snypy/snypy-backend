@@ -19,12 +19,14 @@ from django.urls import include, path
 from django.conf.urls.static import static
 from django.contrib import admin
 
+from rest_registration.api.views import register, verify_registration
+
+
 # Invoked to load REST URLs
 from core.utils.rest_router import router
 from snippets import urls as snippets_urls
 from teams import urls as teams_urls
 from users import urls as users_urls
-
 
 
 urlpatterns = [
@@ -41,6 +43,9 @@ urlpatterns = [
                     namespace='multi_token_auth'
                 )
             ),
+
+            url('^register/$', register, name='register'),
+            url('^verify-registration/$', verify_registration, name='verify-registration'),
         ])),
     ])),
 
