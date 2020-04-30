@@ -47,6 +47,7 @@ urlpatterns = [
             url('^register/$', register, name='register'),
             url('^verify-registration/$', verify_registration, name='verify-registration'),
         ])),
+        path('password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
     ])),
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

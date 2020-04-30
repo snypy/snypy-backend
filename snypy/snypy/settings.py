@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django_userforeignkey',
     'django_filters',
     'rest_registration',
+    'django_rest_passwordreset',
 
     # local
     'snippets',
