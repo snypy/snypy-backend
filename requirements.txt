@@ -2,7 +2,7 @@ django>=3.1.2,<3.2
 djangorestframework>=3.12,<3.13
 markdown>=3.2,<3.3
 django-filter>=2.4,<2.5
-django-cors-headers>=3.5,<3.6
+django-cors-headers>=3.5,<3.8
 django-userforeignkey>=0.3,<0.4
 git+https://github.com/nezhar/django-rest-multiauthtoken@drf312
 django-rest-registration>=0.5.3,<0.6
