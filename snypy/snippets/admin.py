@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 
-from .models import Snippet, File, Label, Language, SnippetLabel, Extension
+from .models import Snippet, File, Label, Language, SnippetLabel, Extension, SnippetFavorite
 
 
 class SnippetLabelInline(admin.TabularInline):
@@ -90,4 +90,9 @@ class ExtensionAdmin(admin.ModelAdmin):
 
 @admin.register(SnippetLabel)
 class SnippetLabelAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(SnippetFavorite)
+class SnippetFavoriteAdmin(admin.ModelAdmin):
     pass

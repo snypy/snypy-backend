@@ -97,3 +97,15 @@ class SnippetLabelQuerySet(BaseQuerySet):
         return self.filter(
             snippet__in=Snippet.objects.editable().values_list('pk', flat=True)
         )
+
+
+class SnippetFavoriteQuerySet(BaseQuerySet):
+
+    def viewable(self):
+        user = get_current_user()
+
+        return self.filter(
+            Q(
+                user=user,
+            )
+        )
