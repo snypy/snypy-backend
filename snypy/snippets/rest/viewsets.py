@@ -6,7 +6,7 @@ from rest_framework.permissions import AllowAny
 from core.rest.viewsets import BaseModelViewSet
 from teams.models import Team, get_user_model
 
-from ..models import Snippet, File, Label, Language, SnippetLabel, Extension
+from ..models import Snippet, File, Label, Language, SnippetLabel, Extension, SnippetFavorite
 from .filters import FileFilter, SnippetFilter, LabelFilter, SnippetLabelFilter
 from .serializers import (
     SnippetSerializer,
@@ -15,6 +15,7 @@ from .serializers import (
     LanguageSerializer,
     SnippetLabelSerializer,
     ExtensionSerializer,
+    SnippetFavoriteSerializer,
 )
 
 
@@ -118,3 +119,8 @@ class ExtensionViewSet(BaseModelViewSet):
     queryset = Extension.objects.all()
     serializer_class = ExtensionSerializer
     search_fields = ("name",)
+
+
+class SnippetFavoriteViewSet(BaseModelViewSet):
+    queryset = SnippetFavorite.objects.all()
+    serializer_class = SnippetFavoriteSerializer
