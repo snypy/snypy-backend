@@ -29,12 +29,21 @@ from teams import urls as teams_urls
 from users import urls as users_urls
 
 
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
 
     # Rest Routes
     path('api/v1/', include([
         path('', include(router.urls)),
+        path('schema/', include([
+            path('', SpectacularAPIView.as_view(), name='schema'),
+            # Optional UI:
+            path('swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+            path('redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+        ])),
         path('auth/', include([
             path(
                 'token/',

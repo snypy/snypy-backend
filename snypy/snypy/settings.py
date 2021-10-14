@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django_filters',
     'rest_registration',
     'django_rest_passwordreset',
+    'drf_spectacular',
+    'drf_spectacular_sidecar',
 
     # local
     'snippets',
@@ -134,7 +136,8 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': (
         'rest_framework.filters.SearchFilter',
         'django_filters.rest_framework.DjangoFilterBackend',
-    )
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 # CORS
@@ -163,3 +166,12 @@ EMAIL_PORT = 1025
 EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
 EMAIL_USE_TLS = False
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'SnyPy API',
+    'DESCRIPTION': 'REST API for SnyPy',
+    'VERSION': '1.0.0',
+    'SWAGGER_UI_DIST': 'SIDECAR',
+    'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
+    'REDOC_DIST': 'SIDECAR',
+}
