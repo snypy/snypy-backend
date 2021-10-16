@@ -4,6 +4,12 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      DEBUG: True
+      SECRET_KEY: changeme!
+      ALLOWED_HOSTS: localhost,127.0.0.1
+      DATABASE_URL: sqlite:////tmp/db.sqlite3
+
     strategy:
       fail-fast: false
       matrix:
@@ -11,6 +17,7 @@ jobs:
           - "3.7"
           - "3.8"
           - "3.9"
+          - "3.10"
 
     steps:
     - uses: actions/checkout@v2
