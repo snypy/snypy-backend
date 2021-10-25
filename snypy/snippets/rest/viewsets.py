@@ -13,7 +13,7 @@ User = get_user_model()
 
 
 class SnippetViewSet(BaseModelViewSet):
-    queryset = Snippet.objects.all()
+    queryset = Snippet.objects.distinct().all()
     serializer_class = SnippetSerializer
     search_fields = ('title', 'description', )
     filter_class = SnippetFilter
