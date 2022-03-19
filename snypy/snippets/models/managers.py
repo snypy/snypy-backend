@@ -1,7 +1,13 @@
 from core.models.managers import BaseManager
 
-from .querysets import SnippetQuerySet, FileQuerySet, LabelQuerySet, LanguageQuerySet, ExtensionQuerySet, \
-    SnippetLabelQuerySet
+from .querysets import (
+    SnippetQuerySet,
+    FileQuerySet,
+    LabelQuerySet,
+    LanguageQuerySet,
+    ExtensionQuerySet,
+    SnippetLabelQuerySet,
+)
 
 
 SnippetManager = BaseManager.from_queryset(SnippetQuerySet)

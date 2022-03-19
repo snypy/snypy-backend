@@ -4,4 +4,4 @@ from .rest.viewsets import UserViewSet
 
 
 # Register rest views
-router.register(r'user', UserViewSet)
+router.register(r"user", UserViewSet)

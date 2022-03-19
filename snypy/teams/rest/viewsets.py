@@ -21,7 +21,7 @@ class UserTeamViewSet(BaseModelViewSet):
         return self.queryset.viewable().annotate(
             snippet_count=Count(
                 Case(
-                    When(team__snippets__user=F('user'), then=1),
+                    When(team__snippets__user=F("user"), then=1),
                     output_field=CharField(),
                 )
             )

@@ -5,72 +5,62 @@ from core.models.querysets import BaseQuerySet
 
 
 class SnippetQuerySet(BaseQuerySet):
-
     def _filter_by_roles(self, roles):
         from teams.models import UserTeam
+
         user = get_current_user()
 
         return self.filter(
             Q(
                 user=user,
-            ) | Q(
+            )
+            | Q(
                 team__in=UserTeam.objects.filter(
                     user=user,
                     role__in=roles,
-                ).values_list('team', flat=True)
+                ).values_list("team", flat=True)
             )
         )
 
     def viewable(self):
         from teams.models import UserTeam
-        return self._filter_by_roles([
-            UserTeam.ROLE_SUBSCRIBER,
-            UserTeam.ROLE_CONTRIBUTOR,
-            UserTeam.ROLE_EDITOR
-        ])
+
+        return self._filter_by_roles([UserTeam.ROLE_SUBSCRIBER, UserTeam.ROLE_CONTRIBUTOR, UserTeam.ROLE_EDITOR])
 
     def editable(self):
         from teams.models import UserTeam
-        return self._filter_by_roles([
-            UserTeam.ROLE_EDITOR
-        ])
+
+        return self._filter_by_roles([UserTeam.ROLE_EDITOR])
 
     def deletable(self):
         from teams.models import UserTeam
-        return self._filter_by_roles([
-            UserTeam.ROLE_EDITOR
-        ])
+
+        return self._filter_by_roles([UserTeam.ROLE_EDITOR])
 
 
 class FileQuerySet(BaseQuerySet):
-
     def viewable(self):
         from snippets.models import Snippet
 
-        return self.filter(
-            snippet__in=Snippet.objects.viewable().values_list('pk', flat=True)
-        )
+        return self.filter(snippet__in=Snippet.objects.viewable().values_list("pk", flat=True))
 
     def editable(self):
         from snippets.models import Snippet
 
-        return self.filter(
-            snippet__in=Snippet.objects.editable().values_list('pk', flat=True)
-        )
+        return self.filter(snippet__in=Snippet.objects.editable().values_list("pk", flat=True))
 
 
 class LabelQuerySet(BaseQuerySet):
-
     def viewable(self):
         from teams.models import UserTeam
+
         user = get_current_user()
 
         return self.filter(
             Q(
                 user=user,
-            ) | Q(
-                team__in=UserTeam.objects.filter(user=user).values_list('team', flat=True)
             )
+            | Q(team__in=UserTeam.objects.filter(user=user).values_list("team", flat=True))
         )
 
 
@@ -83,17 +73,12 @@ class ExtensionQuerySet(BaseQuerySet):
 
 
 class SnippetLabelQuerySet(BaseQuerySet):
-
     def viewable(self):
         from snippets.models import Snippet
 
-        return self.filter(
-            snippet__in=Snippet.objects.viewable().values_list('pk', flat=True)
-        )
+        return self.filter(snippet__in=Snippet.objects.viewable().values_list("pk", flat=True))
 
     def editable(self):
         from snippets.models import Snippet
 
-        return self.filter(
-            snippet__in=Snippet.objects.editable().values_list('pk', flat=True)
-        )
+        return self.filter(snippet__in=Snippet.objects.editable().values_list("pk", flat=True))

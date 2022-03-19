@@ -40,8 +40,8 @@ class TeamSnippetListAPIViewTestCase(BaseTeamApiTestCase):
     def setUp(self):
         super().setUp()
 
-        self.user1.user_permissions.add(Permission.objects.get(codename='view_snippet'))
-        self.user2.user_permissions.add(Permission.objects.get(codename='view_snippet'))
+        self.user1.user_permissions.add(Permission.objects.get(codename="view_snippet"))
+        self.user2.user_permissions.add(Permission.objects.get(codename="view_snippet"))
 
     def test_team_snippet_owner(self):
         response = self.client.get(self.url)
@@ -148,8 +148,8 @@ class TeamSnippetListAPICreateTestCase(BaseTeamApiTestCase):
     def setUp(self):
         super().setUp()
 
-        self.user1.user_permissions.add(Permission.objects.get(codename='add_snippet'))
-        self.user2.user_permissions.add(Permission.objects.get(codename='add_snippet'))
+        self.user1.user_permissions.add(Permission.objects.get(codename="add_snippet"))
+        self.user2.user_permissions.add(Permission.objects.get(codename="add_snippet"))
 
         self.create_data = {
             "title": "Python snippet",
@@ -160,14 +160,14 @@ class TeamSnippetListAPICreateTestCase(BaseTeamApiTestCase):
     def assert_create_response(self, response):
         self.assertEqual(response.status_code, 201)
 
-        self.assertEqual(response.data['user'], self.user1.pk)
-        self.assertEqual(response.data['title'], self.create_data['title'])
-        self.assertEqual(response.data['description'], self.create_data['description'])
-        self.assertEqual(response.data['visibility'], Snippet.VISIBILITY_PRIVATE)
-        self.assertEqual(response.data['team'], self.team1.pk)
-        self.assertEqual(response.data['user_display'], self.user1.username)
-        self.assertListEqual(response.data['files'], [])
-        self.assertListEqual(response.data['labels'], [])
+        self.assertEqual(response.data["user"], self.user1.pk)
+        self.assertEqual(response.data["title"], self.create_data["title"])
+        self.assertEqual(response.data["description"], self.create_data["description"])
+        self.assertEqual(response.data["visibility"], Snippet.VISIBILITY_PRIVATE)
+        self.assertEqual(response.data["team"], self.team1.pk)
+        self.assertEqual(response.data["user_display"], self.user1.username)
+        self.assertListEqual(response.data["files"], [])
+        self.assertListEqual(response.data["labels"], [])
 
     def test_team_snippet_unassigned(self):
         response = self.client.post(self.url, self.create_data)
@@ -198,10 +198,10 @@ class TeamSnippetDetailAPIViewTestCase(BaseTeamApiTestCase):
     def setUp(self):
         super().setUp()
 
-        self.user1.user_permissions.add(Permission.objects.get(codename='view_snippet'))
-        self.user2.user_permissions.add(Permission.objects.get(codename='view_snippet'))
+        self.user1.user_permissions.add(Permission.objects.get(codename="view_snippet"))
+        self.user2.user_permissions.add(Permission.objects.get(codename="view_snippet"))
 
-        self.url = reverse("snippet-detail", kwargs={'pk': self.team1_snippet.pk})
+        self.url = reverse("snippet-detail", kwargs={"pk": self.team1_snippet.pk})
 
     def test_team_snippet_owner(self):
         response = self.client.get(self.url)
@@ -243,23 +243,23 @@ class TeamSnippetDetailAPIEditTestCase(BaseTeamApiTestCase):
     def setUp(self):
         super().setUp()
 
-        self.user1.user_permissions.add(Permission.objects.get(codename='change_snippet'))
-        self.user2.user_permissions.add(Permission.objects.get(codename='change_snippet'))
+        self.user1.user_permissions.add(Permission.objects.get(codename="change_snippet"))
+        self.user2.user_permissions.add(Permission.objects.get(codename="change_snippet"))
 
-        self.url = reverse("snippet-detail", kwargs={'pk': self.team1_snippet.pk})
-        self.patch_data = {'title': "Python snippet edited"}
+        self.url = reverse("snippet-detail", kwargs={"pk": self.team1_snippet.pk})
+        self.patch_data = {"title": "Python snippet edited"}
 
     def assert_patch_response(self, response):
         self.assertEqual(response.status_code, 200)
 
-        self.assertEqual(response.data['user'], self.user1.pk)
-        self.assertEqual(response.data['title'], self.patch_data['title'])
-        self.assertEqual(response.data['description'], "")
-        self.assertEqual(response.data['visibility'], Snippet.VISIBILITY_PRIVATE)
-        self.assertEqual(response.data['team'], self.team1.pk)
-        self.assertEqual(response.data['user_display'], self.user1.username)
-        self.assertListEqual(response.data['files'], [])
-        self.assertListEqual(response.data['labels'], [])
+        self.assertEqual(response.data["user"], self.user1.pk)
+        self.assertEqual(response.data["title"], self.patch_data["title"])
+        self.assertEqual(response.data["description"], "")
+        self.assertEqual(response.data["visibility"], Snippet.VISIBILITY_PRIVATE)
+        self.assertEqual(response.data["team"], self.team1.pk)
+        self.assertEqual(response.data["user_display"], self.user1.username)
+        self.assertListEqual(response.data["files"], [])
+        self.assertListEqual(response.data["labels"], [])
 
     def test_team_snippet_owner(self):
         response = self.client.patch(self.url, self.patch_data)
@@ -301,10 +301,10 @@ class TeamSnippetDetailAPIDeleteTestCase(BaseTeamApiTestCase):
     def setUp(self):
         super().setUp()
 
-        self.user1.user_permissions.add(Permission.objects.get(codename='delete_snippet'))
-        self.user2.user_permissions.add(Permission.objects.get(codename='delete_snippet'))
+        self.user1.user_permissions.add(Permission.objects.get(codename="delete_snippet"))
+        self.user2.user_permissions.add(Permission.objects.get(codename="delete_snippet"))
 
-        self.url = reverse("snippet-detail", kwargs={'pk': self.team1_snippet.pk})
+        self.url = reverse("snippet-detail", kwargs={"pk": self.team1_snippet.pk})
 
     def test_team_snippet_owner(self):
         response = self.client.delete(self.url)

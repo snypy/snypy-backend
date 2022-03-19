@@ -8,4 +8,3 @@ User = get_user_model()
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
     pass
-

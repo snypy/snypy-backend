@@ -4,10 +4,9 @@ from teams.models import UserTeam
 
 
 class UserTeamFilter(django_filters.FilterSet):
-
     class Meta:
         model = UserTeam
         fields = [
-            'user',
-            'team',
+            "user",
+            "team",
         ]

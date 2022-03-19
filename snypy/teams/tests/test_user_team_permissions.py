@@ -22,7 +22,7 @@ class TeamUserListAPIViewTestCase(TeamUserListAPIBaseTestCase):
         super().setUp()
 
         self.user1.user_permissions.add(
-            Permission.objects.get(codename='view_userteam'),
+            Permission.objects.get(codename="view_userteam"),
         )
 
     def test_user_userteam(self):
@@ -88,39 +88,38 @@ class TeamUserListAPICreateTestCase(TeamUserListAPIBaseTestCase):
         super().setUp()
 
         self.user1.user_permissions.add(
-            Permission.objects.get(codename='add_userteam'),
+            Permission.objects.get(codename="add_userteam"),
         )
 
     def test_with_no_assignment(self):
-        response = self.client.post(self.url, {'user': self.user2.pk, 'team': self.team.pk})
+        response = self.client.post(self.url, {"user": self.user2.pk, "team": self.team.pk})
         self.assertEqual(response.status_code, 400)
 
     def test_with_assignment_subscriber(self):
         UserTeam.objects.create(user=self.user1, team=self.team, role=UserTeam.ROLE_SUBSCRIBER)
 
-        response = self.client.post(self.url, {'user': self.user2.pk, 'team': self.team.pk})
+        response = self.client.post(self.url, {"user": self.user2.pk, "team": self.team.pk})
         self.assertEqual(response.status_code, 400)
 
     def test_with_assignment_contributor(self):
         UserTeam.objects.create(user=self.user1, team=self.team, role=UserTeam.ROLE_CONTRIBUTOR)
 
-        response = self.client.post(self.url, {'user': self.user2.pk, 'team': self.team.pk})
+        response = self.client.post(self.url, {"user": self.user2.pk, "team": self.team.pk})
         self.assertEqual(response.status_code, 400)
 
     def test_with_assignment_editor(self):
         UserTeam.objects.create(user=self.user1, team=self.team, role=UserTeam.ROLE_EDITOR)
 
-        response = self.client.post(self.url, {'user': self.user2.pk, 'team': self.team.pk})
+        response = self.client.post(self.url, {"user": self.user2.pk, "team": self.team.pk})
         self.assertEqual(response.status_code, 201)
 
     def test_no_permission(self):
         self.api_authentication(self.token2)
-        response = self.client.post(self.url, {'user': self.user2.pk, 'team': self.team.pk})
+        response = self.client.post(self.url, {"user": self.user2.pk, "team": self.team.pk})
         self.assertEqual(response.status_code, 403)
 
 
 class TeamUserDetailAPIBaseTestCase(TeamUserListAPIBaseTestCase):
-
     def setUp(self):
         super().setUp()
 
@@ -129,16 +128,15 @@ class TeamUserDetailAPIBaseTestCase(TeamUserListAPIBaseTestCase):
 
         self.userteam = UserTeam.objects.create(user=self.user1, team=self.team)
         self.userteam_count = UserTeam.objects.count()
-        self.url = reverse("userteam-detail", kwargs={'pk': self.userteam.pk})
+        self.url = reverse("userteam-detail", kwargs={"pk": self.userteam.pk})
 
 
 class TeamUserDetailAPIViewTestCase(TeamUserDetailAPIBaseTestCase):
-
     def setUp(self):
         super().setUp()
 
         self.user1.user_permissions.add(
-            Permission.objects.get(codename='view_userteam'),
+            Permission.objects.get(codename="view_userteam"),
         )
 
     def test_user_userteam(self):
@@ -169,7 +167,7 @@ class TeamUserDetailAPIViewTestCase(TeamUserDetailAPIBaseTestCase):
         User can see other team assignments of team he is assigned to
         """
         userteam2 = UserTeam.objects.create(user=self.user2, team=self.team)
-        url2 = reverse("userteam-detail", kwargs={'pk': userteam2.pk})
+        url2 = reverse("userteam-detail", kwargs={"pk": userteam2.pk})
 
         for role1 in UserTeam.ROLES:
             self.userteam.role = role1
@@ -189,21 +187,16 @@ class TeamUserDetailAPIViewTestCase(TeamUserDetailAPIBaseTestCase):
 
 
 class TeamUserDetailAPIUpdateTestCase(TeamUserDetailAPIBaseTestCase):
-
     def setUp(self):
         super().setUp()
 
         self.user1.user_permissions.add(
-            Permission.objects.get(codename='change_userteam'),
+            Permission.objects.get(codename="change_userteam"),
         )
         self.userteam.user = self.user2
         self.userteam.save()
 
-        self.edit_data = {
-            'role': UserTeam.ROLE_EDITOR,
-            'team': self.team.pk,
-            'user': self.user2.pk
-        }
+        self.edit_data = {"role": UserTeam.ROLE_EDITOR, "team": self.team.pk, "user": self.user2.pk}
 
     def test_with_no_assignment(self):
         response = self.client.put(self.url, self.edit_data)
@@ -215,7 +208,7 @@ class TeamUserDetailAPIUpdateTestCase(TeamUserDetailAPIBaseTestCase):
         response = self.client.put(self.url, self.edit_data)
         self.assertEqual(response.status_code, 403)
 
-        response = self.client.patch(self.url, {'role': UserTeam.ROLE_EDITOR})
+        response = self.client.patch(self.url, {"role": UserTeam.ROLE_EDITOR})
         self.assertEqual(response.status_code, 403)
 
     def test_with_assignment_contributor(self):
@@ -224,7 +217,7 @@ class TeamUserDetailAPIUpdateTestCase(TeamUserDetailAPIBaseTestCase):
         response = self.client.put(self.url, self.edit_data)
         self.assertEqual(response.status_code, 403)
 
-        response = self.client.patch(self.url, {'role': UserTeam.ROLE_EDITOR})
+        response = self.client.patch(self.url, {"role": UserTeam.ROLE_EDITOR})
         self.assertEqual(response.status_code, 403)
 
     def test_with_assignment_editor(self):
@@ -233,30 +226,30 @@ class TeamUserDetailAPIUpdateTestCase(TeamUserDetailAPIBaseTestCase):
         response = self.client.put(self.url, self.edit_data)
         self.assertEqual(response.status_code, 200)
 
-        response = self.client.patch(self.url, {'role': UserTeam.ROLE_EDITOR})
+        response = self.client.patch(self.url, {"role": UserTeam.ROLE_EDITOR})
         self.assertEqual(response.status_code, 200)
 
-        self.assertEquals(response.data['role'], UserTeam.ROLE_EDITOR)
+        self.assertEquals(response.data["role"], UserTeam.ROLE_EDITOR)
 
     def test_change_user(self):
         UserTeam.objects.create(user=self.user1, team=self.team, role=UserTeam.ROLE_EDITOR)
-        self.edit_data['user'] = self.user3.pk
+        self.edit_data["user"] = self.user3.pk
 
         response = self.client.put(self.url, self.edit_data)
         self.assertEqual(response.status_code, 400)
 
-        response = self.client.patch(self.url, {'user': self.user3.pk})
+        response = self.client.patch(self.url, {"user": self.user3.pk})
         self.assertEqual(response.status_code, 400)
 
     def test_change_team(self):
         UserTeam.objects.create(user=self.user1, team=self.team, role=UserTeam.ROLE_EDITOR)
         team = Team.objects.create(name="Test Team")
-        self.edit_data['team'] = team.pk
+        self.edit_data["team"] = team.pk
 
         response = self.client.put(self.url, self.edit_data)
         self.assertEqual(response.status_code, 400)
 
-        response = self.client.patch(self.url, {'team': team.pk})
+        response = self.client.patch(self.url, {"team": team.pk})
         self.assertEqual(response.status_code, 400)
 
     def test_no_permission(self):
@@ -274,7 +267,7 @@ class TeamUserDetailAPIDeleteTestCase(TeamUserDetailAPIBaseTestCase):
         super().setUp()
 
         self.user1.user_permissions.add(
-            Permission.objects.get(codename='delete_userteam'),
+            Permission.objects.get(codename="delete_userteam"),
         )
         self.userteam.user = self.user2
         self.userteam.save()

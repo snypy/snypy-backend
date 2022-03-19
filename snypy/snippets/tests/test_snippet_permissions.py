@@ -15,7 +15,7 @@ class SnippetListAPIViewTestCase(BaseAPITestCase):
         super().setUp()
 
         self.user1.user_permissions.add(
-            Permission.objects.get(codename='view_snippet'),
+            Permission.objects.get(codename="view_snippet"),
         )
 
     def test_user_snippet(self):
@@ -59,20 +59,20 @@ class SnippetListAPICreateTestCase(BaseAPITestCase):
         super().setUp()
 
         self.user1.user_permissions.add(
-            Permission.objects.get(codename='add_snippet'),
+            Permission.objects.get(codename="add_snippet"),
         )
 
     def assert_create_response(self, response):
         self.assertEqual(response.status_code, 201)
 
-        self.assertEqual(response.data['user'], self.user1.pk)
-        self.assertEqual(response.data['title'], self.create_data['title'])
-        self.assertEqual(response.data['description'], self.create_data['description'])
-        self.assertEqual(response.data['visibility'], Snippet.VISIBILITY_PRIVATE)
-        self.assertEqual(response.data['team'], None)
-        self.assertEqual(response.data['user_display'], self.user1.username)
-        self.assertListEqual(response.data['files'], [])
-        self.assertListEqual(response.data['labels'], [])
+        self.assertEqual(response.data["user"], self.user1.pk)
+        self.assertEqual(response.data["title"], self.create_data["title"])
+        self.assertEqual(response.data["description"], self.create_data["description"])
+        self.assertEqual(response.data["visibility"], Snippet.VISIBILITY_PRIVATE)
+        self.assertEqual(response.data["team"], None)
+        self.assertEqual(response.data["user_display"], self.user1.username)
+        self.assertListEqual(response.data["files"], [])
+        self.assertListEqual(response.data["labels"], [])
 
     def test_user_snippet(self):
         """
@@ -90,7 +90,7 @@ class SnippetListAPICreateTestCase(BaseAPITestCase):
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 400)
 
-        data['title'] = self.create_data['title']
+        data["title"] = self.create_data["title"]
         response = self.client.post(self.url, data)
         self.assert_create_response(response)
 
@@ -101,14 +101,14 @@ class SnippetListAPICreateTestCase(BaseAPITestCase):
         :return:
         """
         create_data = self.create_data.copy()
-        create_data.update({'user': self.user2.pk})
+        create_data.update({"user": self.user2.pk})
 
         response = self.client.post(self.url, create_data)
         self.assert_create_response(response)
 
     def test_no_permission(self):
         self.api_authentication(self.token2)
-        response =  self.client.post(self.url, self.create_data)
+        response = self.client.post(self.url, self.create_data)
         self.assertEqual(response.status_code, 403)
 
 
@@ -116,16 +116,15 @@ class SnippetDetailAPIVBaseTestCase(BaseAPITestCase):
     def setUp(self):
         super().setUp()
         self.snippet = Snippet.objects.create(user=self.user1, title="Python snippet")
-        self.url = reverse("snippet-detail", kwargs={'pk': self.snippet.pk})
+        self.url = reverse("snippet-detail", kwargs={"pk": self.snippet.pk})
         self.snippet_count = Snippet.objects.count()
 
 
 class SnippetDetailAPIViewTestCase(SnippetDetailAPIVBaseTestCase):
-
     def setUp(self):
         super().setUp()
         self.user1.user_permissions.add(
-            Permission.objects.get(codename='view_snippet'),
+            Permission.objects.get(codename="view_snippet"),
         )
 
     def test_user_snippet(self):
@@ -136,14 +135,14 @@ class SnippetDetailAPIViewTestCase(SnippetDetailAPIVBaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Snippet.objects.count(), self.snippet_count)
 
-        self.assertEqual(response.data['title'], "Python snippet")
-        self.assertEqual(response.data['user'], self.user1.pk)
-        self.assertEqual(response.data['description'], '')
-        self.assertEqual(response.data['visibility'], Snippet.VISIBILITY_PRIVATE)
-        self.assertEqual(response.data['team'], None)
-        self.assertEqual(response.data['user_display'], self.user1.username)
-        self.assertListEqual(response.data['files'], [])
-        self.assertListEqual(response.data['labels'], [])
+        self.assertEqual(response.data["title"], "Python snippet")
+        self.assertEqual(response.data["user"], self.user1.pk)
+        self.assertEqual(response.data["description"], "")
+        self.assertEqual(response.data["visibility"], Snippet.VISIBILITY_PRIVATE)
+        self.assertEqual(response.data["team"], None)
+        self.assertEqual(response.data["user_display"], self.user1.username)
+        self.assertListEqual(response.data["files"], [])
+        self.assertListEqual(response.data["labels"], [])
 
     def test_foreign_user_snippet(self):
         """
@@ -165,38 +164,37 @@ class SnippetDetailAPIViewTestCase(SnippetDetailAPIVBaseTestCase):
 
 
 class SnippetDetailAPIUpdateTestCase(SnippetDetailAPIVBaseTestCase):
-
     def setUp(self):
         super().setUp()
         self.user1.user_permissions.add(
-            Permission.objects.get(codename='change_snippet'),
+            Permission.objects.get(codename="change_snippet"),
         )
 
     def test_user_snippet(self):
         response = self.client.put(
             self.url,
             {
-                'title': 'Python snippet update 1',
-                'description': 'Update description',
-            }
+                "title": "Python snippet update 1",
+                "description": "Update description",
+            },
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Snippet.objects.count(), self.snippet_count)
 
-        self.assertEqual(response.data['title'], "Python snippet update 1")
-        self.assertEqual(response.data['user'], self.user1.pk)
-        self.assertEqual(response.data['description'], 'Update description')
-        self.assertEqual(response.data['visibility'], Snippet.VISIBILITY_PRIVATE)
-        self.assertEqual(response.data['team'], None)
-        self.assertEqual(response.data['user_display'], self.user1.username)
-        self.assertListEqual(response.data['files'], [])
-        self.assertListEqual(response.data['labels'], [])
+        self.assertEqual(response.data["title"], "Python snippet update 1")
+        self.assertEqual(response.data["user"], self.user1.pk)
+        self.assertEqual(response.data["description"], "Update description")
+        self.assertEqual(response.data["visibility"], Snippet.VISIBILITY_PRIVATE)
+        self.assertEqual(response.data["team"], None)
+        self.assertEqual(response.data["user_display"], self.user1.username)
+        self.assertListEqual(response.data["files"], [])
+        self.assertListEqual(response.data["labels"], [])
 
         response = self.client.put(
             self.url,
             {
-                'description': 'Update description only',
-            }
+                "description": "Update description only",
+            },
         )
         self.assertEqual(response.status_code, 400)
         self.assertEqual(Snippet.objects.count(), self.snippet_count)
@@ -204,21 +202,21 @@ class SnippetDetailAPIUpdateTestCase(SnippetDetailAPIVBaseTestCase):
         response = self.client.patch(
             self.url,
             {
-                'description': 'Update description only',
-            }
+                "description": "Update description only",
+            },
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Snippet.objects.count(), self.snippet_count)
 
-        self.assertEqual(response.data['title'], "Python snippet update 1")
-        self.assertEqual(response.data['user'], self.user1.pk)
-        self.assertEqual(response.data['description'], 'Update description only')
-        self.assertEqual(response.data['visibility'], Snippet.VISIBILITY_PRIVATE)
-        self.assertEqual(response.data['team'], None)
-        self.assertEqual(response.data['user_display'], self.user1.username)
-        self.assertListEqual(response.data['files'], [])
-        self.assertListEqual(response.data['labels'], [])
-    
+        self.assertEqual(response.data["title"], "Python snippet update 1")
+        self.assertEqual(response.data["user"], self.user1.pk)
+        self.assertEqual(response.data["description"], "Update description only")
+        self.assertEqual(response.data["visibility"], Snippet.VISIBILITY_PRIVATE)
+        self.assertEqual(response.data["team"], None)
+        self.assertEqual(response.data["user_display"], self.user1.username)
+        self.assertListEqual(response.data["files"], [])
+        self.assertListEqual(response.data["labels"], [])
+
     def test_foreign_user_snippet(self):
         self.snippet.user = self.user2
         self.snippet.save()
@@ -226,18 +224,18 @@ class SnippetDetailAPIUpdateTestCase(SnippetDetailAPIVBaseTestCase):
         response = self.client.put(
             self.url,
             {
-                'title': 'Python snippet update 1',
-                'description': 'Update description',
-            }
+                "title": "Python snippet update 1",
+                "description": "Update description",
+            },
         )
         self.assertEqual(response.status_code, 404)
         self.assertEqual(Snippet.objects.count(), self.snippet_count)
-        
+
         response = self.client.patch(
             self.url,
             {
-                'description': 'Update description only',
-            }
+                "description": "Update description only",
+            },
         )
         self.assertEqual(response.status_code, 404)
         self.assertEqual(Snippet.objects.count(), self.snippet_count)
@@ -255,18 +253,17 @@ class SnippetDetailAPIUpdateTestCase(SnippetDetailAPIVBaseTestCase):
 
 
 class SnippetDetailAPIDeleteTestCase(SnippetDetailAPIVBaseTestCase):
-    
     def setUp(self):
         super().setUp()
         self.user1.user_permissions.add(
-            Permission.objects.get(codename='delete_snippet'),
+            Permission.objects.get(codename="delete_snippet"),
         )
 
     def test_user_snippet(self):
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, 204)
         self.assertEqual(Snippet.objects.count(), self.snippet_count - 1)
-    
+
     def test_foreign_user_snippet(self):
         self.snippet.user = self.user2
         self.snippet.save()

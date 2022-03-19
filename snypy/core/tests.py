@@ -6,7 +6,6 @@ User = get_user_model()
 
 
 class BaseAPITestCase(APITestCase):
-
     def setUp(self):
         super().setUp()
 
@@ -24,4 +23,4 @@ class BaseAPITestCase(APITestCase):
         self.api_authentication(self.token1)
 
     def api_authentication(self, token):
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + token.key)

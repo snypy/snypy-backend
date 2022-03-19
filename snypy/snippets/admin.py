@@ -38,7 +38,7 @@ class LabelAdmin(admin.ModelAdmin):
 
     def get_list_per_page(self, request):
         request.GET = request.GET.copy()
-        request_list_per_page = int(request.GET.pop('list_per_page', [0])[0])
+        request_list_per_page = int(request.GET.pop("list_per_page", [0])[0])
         if request_list_per_page:
             return request_list_per_page
 
@@ -53,7 +53,7 @@ class LabelAdmin(admin.ModelAdmin):
         list_display_links = self.get_list_display_links(request, list_display)
         # Add the action checkboxes if any actions are available.
         if self.get_actions(request):
-            list_display = ['action_checkbox', *list_display]
+            list_display = ["action_checkbox", *list_display]
         sortable_by = self.get_sortable_by(request)
         ChangeList = self.get_changelist(request)
 

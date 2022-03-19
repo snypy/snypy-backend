@@ -33,30 +33,42 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, Spec
 
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-
+    url(r"^admin/", admin.site.urls),
     # Rest Routes
-    path('api/v1/', include([
-        path('', include(router.urls)),
-        path('schema/', include([
-            path('', SpectacularAPIView.as_view(), name='schema'),
-            # Optional UI:
-            path('swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-            path('redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
-        ])),
-        path('auth/', include([
-            path(
-                'token/',
-                include(
-                    ('django_rest_multitokenauth.urls', 'django_rest_multitokenauth'),
-                    namespace='multi_token_auth'
-                )
-            ),
-
-            url('^register/$', register, name='register'),
-            url('^verify-registration/$', verify_registration, name='verify-registration'),
-        ])),
-        path('password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
-    ])),
-
+    path(
+        "api/v1/",
+        include(
+            [
+                path("", include(router.urls)),
+                path(
+                    "schema/",
+                    include(
+                        [
+                            path("", SpectacularAPIView.as_view(), name="schema"),
+                            # Optional UI:
+                            path("swagger-ui/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
+                            path("redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
+                        ]
+                    ),
+                ),
+                path(
+                    "auth/",
+                    include(
+                        [
+                            path(
+                                "token/",
+                                include(
+                                    ("django_rest_multitokenauth.urls", "django_rest_multitokenauth"),
+                                    namespace="multi_token_auth",
+                                ),
+                            ),
+                            url("^register/$", register, name="register"),
+                            url("^verify-registration/$", verify_registration, name="verify-registration"),
+                        ]
+                    ),
+                ),
+                path("password_reset/", include("django_rest_passwordreset.urls", namespace="password_reset")),
+            ]
+        ),
+    ),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

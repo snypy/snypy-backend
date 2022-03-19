@@ -18,14 +18,17 @@ class Team(BaseModel, DateModelMixin):
 
     users = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
-        related_name='teams',
-        verbose_name='Users',
-        through='UserTeam',
-        through_fields=('team', 'user', ),
+        related_name="teams",
+        verbose_name="Users",
+        through="UserTeam",
+        through_fields=(
+            "team",
+            "user",
+        ),
     )
 
     name = models.CharField(
-        verbose_name='Name',
+        verbose_name="Name",
         max_length=255,
         null=False,
         blank=False,
@@ -40,11 +43,7 @@ class Team(BaseModel, DateModelMixin):
             user = get_current_user()
 
             if not user.is_anonymous:
-                UserTeam.objects.create(
-                    user=get_current_user(),
-                    team=self,
-                    role=UserTeam.ROLE_EDITOR
-                )
+                UserTeam.objects.create(user=get_current_user(), team=self, role=UserTeam.ROLE_EDITOR)
         else:
             super().save(*args, **kwargs)
 
@@ -53,14 +52,14 @@ class UserTeam(BaseModel, DateModelMixin):
 
     objects = UserTeamManger()
 
-    ROLE_EDITOR = 'EDITOR'
-    ROLE_CONTRIBUTOR = 'CONTRIBUTOR'
-    ROLE_SUBSCRIBER = 'SUBSCRIBER'
+    ROLE_EDITOR = "EDITOR"
+    ROLE_CONTRIBUTOR = "CONTRIBUTOR"
+    ROLE_SUBSCRIBER = "SUBSCRIBER"
 
     ROLES = (
-        (ROLE_EDITOR, 'Editor'),
-        (ROLE_CONTRIBUTOR, 'Contributor'),
-        (ROLE_SUBSCRIBER, 'Subscriber'),
+        (ROLE_EDITOR, "Editor"),
+        (ROLE_CONTRIBUTOR, "Contributor"),
+        (ROLE_SUBSCRIBER, "Subscriber"),
     )
 
     user = UserForeignKey(
@@ -70,9 +69,9 @@ class UserTeam(BaseModel, DateModelMixin):
     )
 
     team = models.ForeignKey(
-        'Team',
-        related_name='user_teams',
-        verbose_name='Team',
+        "Team",
+        related_name="user_teams",
+        verbose_name="Team",
         on_delete=models.CASCADE,
         null=False,
         blank=False,
@@ -87,6 +86,7 @@ class UserTeam(BaseModel, DateModelMixin):
     )
 
     class Meta:
-        unique_together=(
-            ('user', 'team', )
+        unique_together = (
+            "user",
+            "team",
         )
