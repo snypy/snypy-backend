@@ -39,3 +39,15 @@ jobs:
     - name: Run tests
       run: python manage.py test
       working-directory: snypy
+
+    - name: Generate OpenAPI
+      run: python manage.py spectacular --file schema.yml
+      working-directory: snypy
+
+    - name: Create artifact
+      if: ${{ matrix.python-version == '3.10' }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: schema
+        path: snypy/schema.yml
+        if-no-files-found: error
