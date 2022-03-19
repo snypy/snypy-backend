@@ -14,13 +14,13 @@ class SnippetFileSerializer(BaseSerializer):
     class Meta:
         model = File
         fields = (
-            'pk',
-            'url',
-            'language',
-            'name',
-            'content',
-            'created_date',
-            'modified_date',
+            "pk",
+            "url",
+            "language",
+            "name",
+            "content",
+            "created_date",
+            "modified_date",
         )
 
 
@@ -32,18 +32,18 @@ class SnippetSerializer(BaseSerializer):
     class Meta:
         model = Snippet
         fields = (
-            'pk',
-            'url',
-            'title',
-            'description',
-            'visibility',
-            'user',
-            'user_display',
-            'created_date',
-            'modified_date',
-            'labels',
-            'files',
-            'team',
+            "pk",
+            "url",
+            "title",
+            "description",
+            "visibility",
+            "user",
+            "user_display",
+            "created_date",
+            "modified_date",
+            "labels",
+            "files",
+            "team",
         )
 
     def get_user_display(self, obj):
@@ -52,8 +52,8 @@ class SnippetSerializer(BaseSerializer):
 
     def save(self):
         # Extract nested fields
-        labels = self.validated_data.pop('labels') if 'labels' in self.validated_data else None
-        files = self.validated_data.pop('files') if 'files' in self.validated_data else None
+        labels = self.validated_data.pop("labels") if "labels" in self.validated_data else None
+        files = self.validated_data.pop("files") if "files" in self.validated_data else None
 
         # Save instance
         instance = super(SnippetSerializer, self).save()
@@ -70,23 +70,21 @@ class SnippetSerializer(BaseSerializer):
             files_to_add = []
             files_to_update = []
             for file in files:
-                if 'pk' in file and file['pk'] is not None:
+                if "pk" in file and file["pk"] is not None:
                     files_to_update.append(file)
                 else:
-                    file['snippet'] = instance
-                    files_to_add.append(
-                        File(**file)
-                    )
+                    file["snippet"] = instance
+                    files_to_add.append(File(**file))
 
             # Delete old files
-            instance.files.exclude(pk__in=[file['pk'] for file in files_to_update]).delete()
+            instance.files.exclude(pk__in=[file["pk"] for file in files_to_update]).delete()
 
             # Add new files
             instance.files.bulk_create(files_to_add)
 
             # Update existing files
             for file in files_to_update:
-                instance.files.filter(pk=file.pop('pk')).update(**file)
+                instance.files.filter(pk=file.pop("pk")).update(**file)
 
     def validate_team(self, team):
         if team is None:
@@ -94,9 +92,7 @@ class SnippetSerializer(BaseSerializer):
 
         if Team.objects.viewable().filter(pk=team.pk).exists():
             if UserTeam.objects.filter(
-                    team=team,
-                    user=get_current_user(),
-                    role__in=[UserTeam.ROLE_CONTRIBUTOR, UserTeam.ROLE_EDITOR]
+                team=team, user=get_current_user(), role__in=[UserTeam.ROLE_CONTRIBUTOR, UserTeam.ROLE_EDITOR]
             ).exists():
                 return team
 
@@ -110,14 +106,14 @@ class FileSerializer(BaseSerializer):
     class Meta:
         model = File
         fields = (
-            'pk',
-            'url',
-            'snippet',
-            'language',
-            'name',
-            'content',
-            'created_date',
-            'modified_date',
+            "pk",
+            "url",
+            "snippet",
+            "language",
+            "name",
+            "content",
+            "created_date",
+            "modified_date",
         )
 
 
@@ -127,14 +123,14 @@ class LabelSerializer(BaseSerializer):
     class Meta:
         model = Label
         fields = (
-            'pk',
-            'url',
-            'name',
-            'user',
-            'created_date',
-            'modified_date',
-            'team',
-            'snippet_count',
+            "pk",
+            "url",
+            "name",
+            "user",
+            "created_date",
+            "modified_date",
+            "team",
+            "snippet_count",
         )
 
     def validate_team(self, team):
@@ -153,10 +149,10 @@ class LanguageSerializer(BaseSerializer):
     class Meta:
         model = Language
         fields = (
-            'pk',
-            'url',
-            'name',
-            'snippet_count',
+            "pk",
+            "url",
+            "name",
+            "snippet_count",
         )
 
 
@@ -167,10 +163,10 @@ class SnippetLabelSerializer(BaseSerializer):
     class Meta:
         model = SnippetLabel
         fields = (
-            'pk',
-            'url',
-            'snippet',
-            'label',
+            "pk",
+            "url",
+            "snippet",
+            "label",
         )
 
 
@@ -180,8 +176,8 @@ class ExtensionSerializer(BaseSerializer):
     class Meta:
         model = Extension
         fields = (
-            'pk',
-            'url',
-            'name',
-            'language',
+            "pk",
+            "url",
+            "name",
+            "language",
         )

@@ -4,5 +4,5 @@ from .rest.viewsets import TeamViewSet, UserTeamViewSet
 
 
 # Register rest views
-router.register(r'team', TeamViewSet)
-router.register(r'userteam', UserTeamViewSet)
+router.register(r"team", TeamViewSet)
+router.register(r"userteam", UserTeamViewSet)

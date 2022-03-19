@@ -13,7 +13,7 @@ class UserViewSet(BaseModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-    @action(methods=['get'], detail=False)
+    @action(methods=["get"], detail=False)
     def current(self, request):
         serializer = self.get_serializer(request.user)
         return Response(serializer.data)

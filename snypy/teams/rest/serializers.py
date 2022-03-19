@@ -7,16 +7,15 @@ from ..models import Team, UserTeam
 
 
 class TeamSerializer(BaseSerializer):
-
     class Meta:
         model = Team
         fields = (
-            'pk',
-            'url',
-            'users',
-            'name',
-            'created_date',
-            'modified_date',
+            "pk",
+            "url",
+            "users",
+            "name",
+            "created_date",
+            "modified_date",
         )
 
 
@@ -27,15 +26,15 @@ class UserTeamSerializer(BaseSerializer):
     class Meta:
         model = UserTeam
         fields = (
-            'pk',
-            'url',
-            'user',
-            'team',
-            'role',
-            'created_date',
-            'modified_date',
-            'user_display',
-            'snippet_count',
+            "pk",
+            "url",
+            "user",
+            "team",
+            "role",
+            "created_date",
+            "modified_date",
+            "user_display",
+            "snippet_count",
         )
 
     def get_user_display(self, obj):
@@ -48,11 +47,7 @@ class UserTeamSerializer(BaseSerializer):
                 raise serializers.ValidationError("Team cannot be changed")
 
         if Team.objects.viewable().filter(pk=team.pk).exists():
-            if UserTeam.objects.filter(
-                    team=team,
-                    user=get_current_user(),
-                    role__in=[UserTeam.ROLE_EDITOR]
-            ).exists():
+            if UserTeam.objects.filter(team=team, user=get_current_user(), role__in=[UserTeam.ROLE_EDITOR]).exists():
                 return team
 
         raise serializers.ValidationError("Please select a valid Team")

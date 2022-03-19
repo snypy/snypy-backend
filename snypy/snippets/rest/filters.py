@@ -4,22 +4,30 @@ from snippets.models import File, Snippet, Label, SnippetLabel
 
 
 class FileFilter(django_filters.FilterSet):
-
     class Meta:
         model = File
         fields = [
-            'snippet',
-            'language',
+            "snippet",
+            "language",
         ]
 
 
 class SnippetFilter(django_filters.FilterSet):
 
-    favorite = django_filters.BooleanFilter(method='filter_is_favorite', label="Is favorite?", )
+    favorite = django_filters.BooleanFilter(
+        method="filter_is_favorite",
+        label="Is favorite?",
+    )
 
-    labeled = django_filters.BooleanFilter(method='filter_is_labeled', label="Is labeled?", )
+    labeled = django_filters.BooleanFilter(
+        method="filter_is_labeled",
+        label="Is labeled?",
+    )
 
-    team_is_null = django_filters.BooleanFilter(method='filter_team_is_null', label="Team is None", )
+    team_is_null = django_filters.BooleanFilter(
+        method="filter_team_is_null",
+        label="Team is None",
+    )
 
     # ToDo: Add after shares app
     # shared_to = django_filters.NumberFilter(field_name="shared__user")
@@ -28,11 +36,11 @@ class SnippetFilter(django_filters.FilterSet):
     class Meta:
         model = Snippet
         fields = [
-            'labels',
-            'visibility',
-            'files__language',
-            'user',
-            'team',
+            "labels",
+            "visibility",
+            "files__language",
+            "user",
+            "team",
         ]
 
     def filter_is_favorite(self, queryset, name, value):
@@ -52,13 +60,16 @@ class SnippetFilter(django_filters.FilterSet):
 
 class LabelFilter(django_filters.FilterSet):
 
-    user = django_filters.NumberFilter(method='filter_user', label="User", )
+    user = django_filters.NumberFilter(
+        method="filter_user",
+        label="User",
+    )
 
     class Meta:
         model = Label
         fields = [
-            'user',
-            'team',
+            "user",
+            "team",
         ]
 
     def filter_user(self, queryset, name, value):
@@ -72,6 +83,6 @@ class SnippetLabelFilter(django_filters.FilterSet):
     class Meta:
         model = SnippetLabel
         fields = [
-            'snippet',
-            'label',
+            "snippet",
+            "label",
         ]
