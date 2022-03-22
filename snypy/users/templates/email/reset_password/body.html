@@ -1,0 +1,5 @@
+{% extends "email/base.html" %}
+
+{% block content %}
+<p>please reset your account password by clicking on this link: <a href="{{ reset_password_url }}">{{ reset_password_url }}</a></p>
+{% endblock %}

@@ -90,6 +90,7 @@ DATABASES = {
 
 # Email config
 EMAIL_CONFIG = env.email_url("EMAIL_URL", default="smtp://user:password@localhost:25")
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="SnyPy <noreply@snypy.com>")
 
 vars().update(EMAIL_CONFIG)
 
@@ -148,7 +149,12 @@ REST_REGISTRATION = {
     "REGISTER_EMAIL_VERIFICATION_ENABLED": False,
     "REGISTER_VERIFICATION_URL": env("REGISTER_VERIFICATION_URL"),
     "REGISTER_EMAIL_VERIFICATION_URL": env("REGISTER_EMAIL_VERIFICATION_URL"),
-    "VERIFICATION_FROM_EMAIL": "no-reply@snypy.com",
+    "VERIFICATION_FROM_EMAIL": DEFAULT_FROM_EMAIL,
+    "REGISTER_VERIFICATION_EMAIL_TEMPLATES": {
+        "subject": "email/register/subject.txt",
+        "text_body": "email/register/body.txt",
+        "html_body": "email/register/body.html",
+    },
 }
 REGISTRATION_DEFAULT_GROUPS = env.list("REGISTRATION_DEFAULT_GROUPS", default=["User"])
 RESET_PASSWORD_VERIFICATION_URL = env("RESET_PASSWORD_VERIFICATION_URL", default="http://tld/reset/?token={token}")

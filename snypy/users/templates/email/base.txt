@@ -1,0 +1,5 @@
+Hi there,
+
+{% block content %}CONTENT{% endblock %}
+
+Powered by SnyPy

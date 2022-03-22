@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMultiAlternatives
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import Group
@@ -37,14 +37,18 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
         "reset_password_url": settings.RESET_PASSWORD_VERIFICATION_URL.format(token=reset_password_token.key),
     }
 
-    msg = EmailMessage(
+    msg = EmailMultiAlternatives(
         # title:
-        "Password Reset for {title} account".format(title="SnyPy"),
+        "Password reset for your SnyPy account",
         # message:
-        render_to_string("email/user_reset_password.txt", context),
+        render_to_string("email/reset_password/body.txt", context),
         # from:
-        "noreply@snypy.com",
+        settings.DEFAULT_FROM_EMAIL,
         # to:
         [reset_password_token.user.email],
     )
+
+    email_html_message = render_to_string("email/reset_password/body.html", context)
+    msg.attach_alternative(email_html_message, "text/html")
+
     msg.send()

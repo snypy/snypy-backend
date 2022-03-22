@@ -1,0 +1,5 @@
+{% extends "email/base.html" %}
+
+{% block content %}
+<p>please verify your account by clicking on this link: <a href="{{ verification_url }}">{{ verification_url }}</a></p>
+{% endblock %}
