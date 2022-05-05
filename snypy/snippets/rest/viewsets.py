@@ -1,4 +1,7 @@
 from django.db.models import Count, CharField, When, Case, Q
+from rest_framework.response import Response
+from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.permissions import AllowAny
 
 from core.rest.viewsets import BaseModelViewSet
 from teams.models import Team, get_user_model
@@ -27,12 +30,32 @@ class SnippetViewSet(BaseModelViewSet):
     )
     filter_class = SnippetFilter
 
+    def get_permissions(self):
+        """
+        Allow unautheticated access to the snippet detail endpoint
+        """
+        if self.action == "retrieve":
+            return [
+                AllowAny(),
+            ]
+        return super().get_permissions()
+
 
 class FileViewSet(BaseModelViewSet):
     queryset = File.objects.all()
     serializer_class = FileSerializer
     search_fields = ("name",)
     filter_class = FileFilter
+
+    def get_permissions(self):
+        """
+        Allow unautheticated access to the file detail and list endpoint
+        """
+        if self.action == "list" or self.action == "retrieve":
+            return [
+                AllowAny(),
+            ]
+        return super().get_permissions()
 
 
 class LabelViewSet(BaseModelViewSet):

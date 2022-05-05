@@ -159,7 +159,7 @@ class SnippetDetailAPIViewTestCase(SnippetDetailAPIVBaseTestCase):
         self.api_authentication(self.token2)
 
         response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 404)
         self.assertEqual(Snippet.objects.count(), self.snippet_count)
 
 

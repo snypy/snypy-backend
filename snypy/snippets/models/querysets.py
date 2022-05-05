@@ -7,11 +7,18 @@ from core.models.querysets import BaseQuerySet
 class SnippetQuerySet(BaseQuerySet):
     def _filter_by_roles(self, roles):
         from teams.models import UserTeam
+        from snippets.models import Snippet
 
         user = get_current_user()
 
+        if user.is_anonymous:
+            return self.filter(visibility=Snippet.VISIBILITY_PUBLIC)
+
         return self.filter(
             Q(
+                visibility=Snippet.VISIBILITY_PUBLIC,
+            )
+            | Q(
                 user=user,
             )
             | Q(
