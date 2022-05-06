@@ -14,8 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf import settings
-from django.conf.urls import url
-from django.urls import include, path
+from django.urls import include, path, re_path
 from django.conf.urls.static import static
 from django.contrib import admin
 
@@ -33,7 +32,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, Spec
 
 
 urlpatterns = [
-    url(r"^admin/", admin.site.urls),
+    re_path(r"^admin/", admin.site.urls),
     # Rest Routes
     path(
         "api/v1/",
@@ -62,8 +61,8 @@ urlpatterns = [
                                     namespace="multi_token_auth",
                                 ),
                             ),
-                            url("^register/$", register, name="register"),
-                            url("^verify-registration/$", verify_registration, name="verify-registration"),
+                            re_path("^register/$", register, name="register"),
+                            re_path("^verify-registration/$", verify_registration, name="verify-registration"),
                         ]
                     ),
                 ),
