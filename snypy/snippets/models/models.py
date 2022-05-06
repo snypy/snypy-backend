@@ -1,5 +1,5 @@
 from django.db import models
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 from django_userforeignkey.models.fields import UserForeignKey
 
@@ -206,4 +206,4 @@ class SnippetLabel(BaseModel):
     )
 
     def __str__(self):
-        return f"{force_text(self.snippet)} - {force_text(self.label)}"
+        return f"{force_str(self.snippet)} - {force_str(self.label)}"
