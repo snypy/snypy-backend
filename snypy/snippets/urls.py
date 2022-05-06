@@ -7,6 +7,7 @@ from .rest.viewsets import (
     LanguageViewSet,
     SnippetLabelViewSet,
     ExtensionViewSet,
+    SnippetFavoriteViewSet,
 )
 
 
@@ -17,3 +18,4 @@ router.register(r"label", LabelViewSet)
 router.register(r"language", LanguageViewSet)
 router.register(r"snippetlabel", SnippetLabelViewSet)
 router.register(r"extension", ExtensionViewSet)
+router.register(r"snippetfavorite", SnippetFavoriteViewSet)

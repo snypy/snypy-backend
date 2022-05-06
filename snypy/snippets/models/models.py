@@ -4,7 +4,15 @@ from django.utils.encoding import force_str
 from django_userforeignkey.models.fields import UserForeignKey
 
 from core.models import BaseModel, DateModelMixin
-from .managers import SnippetManager, FileManager, LabelManager, LanguageManager, ExtensionManager, SnippetLabelManager
+from .managers import (
+    SnippetManager,
+    FileManager,
+    LabelManager,
+    LanguageManager,
+    ExtensionManager,
+    SnippetLabelManager,
+    SnippetFavoriteManager,
+)
 
 
 class Snippet(BaseModel, DateModelMixin):
@@ -207,3 +215,28 @@ class SnippetLabel(BaseModel):
 
     def __str__(self):
         return f"{force_str(self.snippet)} - {force_str(self.label)}"
+
+
+class SnippetFavorite(BaseModel):
+
+    objects = SnippetFavoriteManager()
+
+    snippet = models.ForeignKey(
+        "Snippet",
+        related_name="snippet_favorites",
+        verbose_name="Snippet",
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False,
+    )
+
+    user = UserForeignKey(
+        auto_user_add=True,
+        related_name="snippet_favorites",
+        verbose_name="User",
+        editable=False,
+        on_delete=models.CASCADE,
+    )
+
+    def __str__(self):
+        return f"{force_str(self.snippet)} - {force_str(self.user)}"

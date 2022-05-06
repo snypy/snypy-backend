@@ -4,7 +4,7 @@ from rest_framework.fields import SerializerMethodField, IntegerField
 
 from core.rest.serializers import BaseSerializer
 from teams.models import Team, get_current_user, UserTeam
-from ..models import Snippet, File, Label, Language, SnippetLabel, Extension
+from ..models import Snippet, File, Label, Language, SnippetLabel, Extension, SnippetFavorite
 
 
 class SnippetFileSerializer(BaseSerializer):
@@ -180,4 +180,16 @@ class ExtensionSerializer(BaseSerializer):
             "url",
             "name",
             "language",
+        )
+
+
+class SnippetFavoriteSerializer(BaseSerializer):
+    snippet = PrimaryKeyRelatedField(queryset=Snippet.objects.all())
+
+    class Meta:
+        model = SnippetFavorite
+        fields = (
+            "pk",
+            "url",
+            "snippet",
         )
