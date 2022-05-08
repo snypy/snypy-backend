@@ -4,7 +4,7 @@ from django.contrib.auth.models import Permission
 from django.urls import reverse
 
 from core.tests import BaseAPITestCase
-from snippets.models import Snippet
+from snippets.models import Snippet, SnippetFavorite
 
 
 class SnippetListAPIViewTestCase(BaseAPITestCase):
@@ -44,6 +44,26 @@ class SnippetListAPIViewTestCase(BaseAPITestCase):
         self.api_authentication(self.token2)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 403)
+
+    def test_favorite_filter(self):
+        snippet1 = Snippet.objects.create(user=self.user1, title="Snippet 1")
+        Snippet.objects.create(user=self.user1, title="Snippet 2")
+        Snippet.objects.create(user=self.user1, title="Snippet 3")
+        Snippet.objects.create(user=self.user1, title="Snippet 4")
+
+        SnippetFavorite.objects.create(user=self.user1, snippet=snippet1)
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(json.loads(response.content)), 4)
+
+        response = self.client.get(self.url + "?favorite=true")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(json.loads(response.content)), 1)
+
+        response = self.client.get(self.url + "?favorite=false")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(json.loads(response.content)), 3)
 
 
 class SnippetListAPICreateTestCase(BaseAPITestCase):

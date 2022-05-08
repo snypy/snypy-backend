@@ -1,7 +1,9 @@
 from django.db.models import Count, CharField, When, Case, Q
+from django.db import IntegrityError
 from rest_framework.response import Response
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import AllowAny
+from rest_framework.exceptions import ValidationError
 
 from core.rest.viewsets import BaseModelViewSet
 from teams.models import Team, get_user_model
@@ -124,3 +126,9 @@ class ExtensionViewSet(BaseModelViewSet):
 class SnippetFavoriteViewSet(BaseModelViewSet):
     queryset = SnippetFavorite.objects.all()
     serializer_class = SnippetFavoriteSerializer
+
+    def perform_create(self, serializer):
+        try:
+            serializer.save()
+        except IntegrityError:
+            raise ValidationError({"snippet": ["Snippet is already in favorites"]})

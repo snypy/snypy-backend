@@ -193,3 +193,8 @@ class SnippetFavoriteSerializer(BaseSerializer):
             "url",
             "snippet",
         )
+
+    def validate_snippet(self, snippet):
+        if not Snippet.objects.viewable().filter(pk=snippet.pk).exists():
+            raise serializers.ValidationError("Snippet not found.")
+        return snippet
