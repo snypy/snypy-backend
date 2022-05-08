@@ -94,9 +94,10 @@ class SnippetLabelQuerySet(BaseQuerySet):
 class SnippetFavoriteQuerySet(BaseQuerySet):
     def viewable(self):
         user = get_current_user()
+        return self.filter(user=user)
 
-        return self.filter(
-            Q(
-                user=user,
-            )
-        )
+    def editable(self):
+        return self.none()
+
+    def deletable(self):
+        return self.viewable()
