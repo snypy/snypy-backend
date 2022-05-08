@@ -240,3 +240,6 @@ class SnippetFavorite(BaseModel):
 
     def __str__(self):
         return f"{force_str(self.snippet)} - {force_str(self.user)}"
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["snippet", "user"], name="user_and_snippet_uniq")]

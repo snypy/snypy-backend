@@ -1,6 +1,7 @@
 import django_filters
 
 from snippets.models import File, Snippet, Label, SnippetLabel
+from snippets.models.models import SnippetFavorite
 
 
 class FileFilter(django_filters.FilterSet):
@@ -44,7 +45,11 @@ class SnippetFilter(django_filters.FilterSet):
         ]
 
     def filter_is_favorite(self, queryset, name, value):
-        pass
+        favorite_pks = SnippetFavorite.objects.viewable().values_list("snippet_id", flat=True)
+        if value:
+            return queryset.filter(pk__in=favorite_pks)
+
+        return queryset.exclude(pk__in=favorite_pks)
 
     def filter_is_labeled(self, queryset, name, value):
         if value:
