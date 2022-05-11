@@ -85,6 +85,16 @@ class LanguageViewSet(BaseModelViewSet):
     serializer_class = LanguageSerializer
     search_fields = ("name",)
 
+    def get_permissions(self):
+        """
+        Allow unautheticated access to the list endpoint
+        """
+        if self.action == "list":
+            return [
+                AllowAny(),
+            ]
+        return super().get_permissions()
+
     def get_queryset(self):
         viewable_snippets = Snippet.objects.viewable().values_list("pk", flat=True)
 
