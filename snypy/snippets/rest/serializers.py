@@ -26,6 +26,7 @@ class SnippetFileSerializer(BaseSerializer):
 
 class SnippetSerializer(BaseSerializer):
     user_display = SerializerMethodField()
+    user_avatar = SerializerMethodField()
     labels = PrimaryKeyRelatedField(many=True, read_only=False, queryset=Label.objects.all(), required=False)
     files = SnippetFileSerializer(File.objects.none(), many=True, required=False)
 
@@ -39,6 +40,7 @@ class SnippetSerializer(BaseSerializer):
             "visibility",
             "user",
             "user_display",
+            "user_avatar",
             "created_date",
             "modified_date",
             "labels",
@@ -49,6 +51,10 @@ class SnippetSerializer(BaseSerializer):
     def get_user_display(self, obj):
         if obj.user:
             return obj.user.username
+
+    def get_user_avatar(self, obj):
+        if obj.user:
+            return obj.user.get_avatar(size=25)
 
     def save(self):
         # Extract nested fields
