@@ -37,12 +37,23 @@ class SnippetQuerySet(BaseQuerySet):
     def editable(self):
         from teams.models import UserTeam
 
-        return self._filter_by_roles([UserTeam.ROLE_EDITOR])
+        user = get_current_user()
+
+        if user.is_anonymous:
+            return self.none()
+
+        return self.filter(
+            Q(user=user)
+            | Q(
+                team__in=UserTeam.objects.filter(
+                    user=user,
+                    role=UserTeam.ROLE_EDITOR,
+                ).values_list("team", flat=True)
+            )
+        )
 
     def deletable(self):
-        from teams.models import UserTeam
-
-        return self._filter_by_roles([UserTeam.ROLE_EDITOR])
+        return self.editable()
 
 
 class FileQuerySet(BaseQuerySet):

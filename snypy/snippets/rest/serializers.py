@@ -46,6 +46,8 @@ class SnippetSerializer(BaseSerializer):
             "labels",
             "files",
             "team",
+            "editable",
+            "deletable",
         )
 
     def get_user_display(self, obj):
