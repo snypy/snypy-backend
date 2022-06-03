@@ -4,13 +4,13 @@ on:
     types: [published]
 
 jobs:
-  openapi:
+  version bump:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
       with:
-        repository: 'https://github.com/snypy/snypy-docker'
-        token: ${{ secrets.WORKFLOW_GIT_ACCESS_TOKEN }}
+        repository: 'snypy/snypy-docker'
+        token: ${{ secrets.API_TOKEN_GITHUB }}
 
     - name: Update env file
       run: |
