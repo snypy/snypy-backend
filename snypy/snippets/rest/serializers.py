@@ -67,14 +67,14 @@ class SnippetSerializer(BaseSerializer):
         instance = super(SnippetSerializer, self).save()
 
         # Save labels
-        if labels:
+        if labels is not None:
             self.instance.labels.clear()
             labels_to_add = []
             for label in labels:
                 labels_to_add.append(SnippetLabel(label=label, snippet=self.instance))
             SnippetLabel.objects.bulk_create(labels_to_add)
 
-        if files:
+        if files is not None:
             files_to_add = []
             files_to_update = []
             for file in files:
