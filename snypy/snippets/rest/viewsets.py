@@ -43,6 +43,22 @@ class SnippetViewSet(BaseModelViewSet):
             ]
         return super().get_permissions()
 
+    def get_queryset(self):
+        """
+        Extend default queryset to improve performance
+        """
+        return (
+            self.queryset.viewable()
+            .select_related(
+                "user",
+                "team",
+            )
+            .prefetch_related(
+                "files",
+                "labels",
+            )
+        )
+
 
 class FileViewSet(BaseModelViewSet):
     queryset = File.objects.all()
