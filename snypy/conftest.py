@@ -1,6 +1,6 @@
 import pytest
 from django.contrib.auth import get_user_model
-from django_rest_multitokenauth.models import MultiToken
+from drf_multitokenauth.models import MultiToken
 from rest_framework.test import APIClient
 
 

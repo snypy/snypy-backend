@@ -32,7 +32,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # third party
     "rest_framework",
-    "django_rest_multitokenauth",
+    "drf_multitokenauth",
     "corsheaders",
     "django_userforeignkey",
     "django_filters",
@@ -130,7 +130,7 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "django_rest_multitokenauth.coreauthentication.MultiTokenAuthentication",
+        "drf_multitokenauth.coreauthentication.MultiTokenAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     ],
     "DEFAULT_FILTER_BACKENDS": (
