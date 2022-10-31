@@ -206,3 +206,12 @@ class SnippetFavoriteSerializer(BaseSerializer):
         if not Snippet.objects.viewable().filter(pk=snippet.pk).exists():
             raise serializers.ValidationError("Snippet not found.")
         return snippet
+
+
+class SnippetFavoriteActionSerializer(BaseSerializer):
+    class Meta:
+        model = SnippetFavorite
+        fields = (
+            "pk",
+            "url",
+        )

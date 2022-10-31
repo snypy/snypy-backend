@@ -230,3 +230,83 @@ class SnippetFavoriteDetailAPIDeleteTestCase(SnippetFavoriteDetailAPIVBaseTestCa
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, 403)
         self.assertEqual(SnippetFavorite.objects.count(), self.snippet_favorite_count)
+
+
+class SnippetFavoriteToggleAPIVBaseTestCase(BaseAPITestCase):
+    def setUp(self):
+        super().setUp()
+        self.snippet1 = Snippet.objects.create(
+            user=self.user1, title="Snippet 1, User 1", visibility=Snippet.VISIBILITY_PRIVATE
+        )
+        self.snippet2 = Snippet.objects.create(
+            user=self.user1, title="Snippet 2, User 1", visibility=Snippet.VISIBILITY_PRIVATE
+        )
+        self.snippet3 = Snippet.objects.create(
+            user=self.user2, title="Snippet 1, User 2", visibility=Snippet.VISIBILITY_PRIVATE
+        )
+        self.snippet4 = Snippet.objects.create(
+            user=self.user2, title="Snippet 2, User 2", visibility=Snippet.VISIBILITY_PUBLIC
+        )
+
+        self.snippet1_favorite_url = reverse("snippet-favorite", kwargs={"pk": self.snippet1.pk})
+        self.snippet2_favorite_url = reverse("snippet-favorite", kwargs={"pk": self.snippet2.pk})
+        self.snippet3_favorite_url = reverse("snippet-favorite", kwargs={"pk": self.snippet3.pk})
+        self.snippet4_favorite_url = reverse("snippet-favorite", kwargs={"pk": self.snippet4.pk})
+
+        self.snippet_favorite1 = SnippetFavorite.objects.create(user=self.user1, snippet=self.snippet1)
+        self.snippet_favorite3 = SnippetFavorite.objects.create(user=self.user2, snippet=self.snippet3)
+        self.snippet_favorite4 = SnippetFavorite.objects.create(user=self.user2, snippet=self.snippet4)
+        self.snippet_favorite_count = SnippetFavorite.objects.count()
+
+        self.user1.user_permissions.add(
+            Permission.objects.get(codename="view_snippet"),
+            Permission.objects.get(codename="add_snippet"),
+        )
+        self.user2.user_permissions.add(
+            Permission.objects.get(codename="view_snippet"),
+            Permission.objects.get(codename="add_snippet"),
+        )
+
+    def test_remove_own_snippet_favorite(self):
+        """
+        Allows to remove own snippet favorite
+        """
+        response = self.client.post(self.snippet1_favorite_url)
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(SnippetFavorite.objects.count(), self.snippet_favorite_count - 1)
+        self.assertEqual(response.data, None)
+
+    def test_add_snippet_own_favorite(self):
+        """
+        Allows to add own snippet favorite
+        """
+        response = self.client.post(self.snippet2_favorite_url)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(SnippetFavorite.objects.count(), self.snippet_favorite_count + 1)
+
+    def test_add_remove_foreign_private_snippet_favorite(self):
+        """
+        Deny adding and removing foreign private snippet favorites
+        """
+        response = self.client.post(self.snippet3_favorite_url)
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(SnippetFavorite.objects.count(), self.snippet_favorite_count)
+
+        self.api_authentication(self.token2)
+
+        response = self.client.post(self.snippet3_favorite_url)
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(SnippetFavorite.objects.count(), self.snippet_favorite_count - 1)
+        self.assertEqual(response.data, None)
+
+        response = self.client.post(self.snippet3_favorite_url)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(SnippetFavorite.objects.count(), self.snippet_favorite_count)
+
+    def test_add_remove_foreign_public_snippet_favorite(self):
+        """
+        Allow adding and removing foreign public snippet favorites
+        """
+        response = self.client.post(self.snippet4_favorite_url)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(SnippetFavorite.objects.count(), self.snippet_favorite_count + 1)

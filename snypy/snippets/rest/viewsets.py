@@ -1,9 +1,10 @@
 from django.db.models import Count, CharField, When, Case, Q
 from django.db import IntegrityError
 from rest_framework.response import Response
-from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.exceptions import ValidationError
+from rest_framework.decorators import action
+from rest_framework import status
 
 from core.rest.viewsets import BaseModelViewSet
 from teams.models import Team, get_user_model
@@ -11,6 +12,7 @@ from teams.models import Team, get_user_model
 from ..models import Snippet, File, Label, Language, SnippetLabel, Extension, SnippetFavorite
 from .filters import FileFilter, SnippetFilter, LabelFilter, SnippetLabelFilter
 from .serializers import (
+    SnippetFavoriteActionSerializer,
     SnippetSerializer,
     FileSerializer,
     LabelSerializer,
@@ -58,6 +60,24 @@ class SnippetViewSet(BaseModelViewSet):
                 "labels",
             )
         )
+
+    @action(detail=True, methods=["POST"], serializer_class=SnippetFavoriteActionSerializer)
+    def favorite(self, request, pk=None):
+        """
+        Toggle favorite status of a snippet
+        """
+        snippet = self.get_object()
+        favorite, created = SnippetFavorite.objects.get_or_create(
+            user=request.user,
+            snippet=snippet,
+        )
+
+        if not created:
+            favorite.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        serializer = SnippetFavoriteActionSerializer(favorite, context={"request": request})
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class FileViewSet(BaseModelViewSet):
