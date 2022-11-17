@@ -18,6 +18,9 @@ class BaseModelPermissions(DjangoModelPermissions):
         if has_permission and view.action == "retrieve":
             return self._queryset(view).viewable().filter(pk=obj.pk).exists()
 
+        if has_permission and view.action == "favorite":
+            return self._queryset(view).viewable().filter(pk=obj.pk).exists()
+
         if has_permission and view.action == "update":
             return self._queryset(view).editable().filter(pk=obj.pk).exists()
 
