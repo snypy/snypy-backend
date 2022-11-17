@@ -29,6 +29,7 @@ class SnippetSerializer(BaseSerializer):
     user_avatar = SerializerMethodField()
     labels = PrimaryKeyRelatedField(many=True, read_only=False, queryset=Label.objects.all(), required=False)
     files = SnippetFileSerializer(File.objects.none(), many=True, required=False)
+    favorite = SerializerMethodField()
 
     class Meta:
         model = Snippet
@@ -48,7 +49,11 @@ class SnippetSerializer(BaseSerializer):
             "team",
             "editable",
             "deletable",
+            "favorite",
         )
+
+    def get_favorite(self, obj):
+        return obj.snippet_favorites.exists() > 0
 
     def get_user_display(self, obj):
         if obj.user:

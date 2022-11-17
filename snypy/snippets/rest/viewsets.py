@@ -58,6 +58,7 @@ class SnippetViewSet(BaseModelViewSet):
             .prefetch_related(
                 "files",
                 "labels",
+                "snippet_favorites",
             )
         )
 
