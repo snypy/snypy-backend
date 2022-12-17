@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "shares",
     "teams",
     "users",
+    "content_pages",
 ]
 
 MIDDLEWARE = [

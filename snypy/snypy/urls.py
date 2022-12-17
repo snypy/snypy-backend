@@ -26,6 +26,7 @@ from core.utils.rest_router import router
 from snippets import urls as snippets_urls
 from teams import urls as teams_urls
 from users import urls as users_urls
+from content_pages import urls as content_page_urls
 
 
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
