@@ -8,5 +8,5 @@ django-rest-multitokenauth>=1.4.0,<1.6.0
 django-rest-registration>=0.5.3,<0.8
 django-rest-passwordreset>=1.1,<1.4
 drf-spectacular[sidecar]>=0.20.1,<0.26
-django-environ>=0.7.0,<0.10
+django-environ>=0.7.0,<0.11
 django-gravatar2>=1.4.4,<1.5
