@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "django_rest_passwordreset",
     "drf_spectacular",
     "drf_spectacular_sidecar",
+    "django_linear_migrations",
     # local
     "snippets",
     "shares",
