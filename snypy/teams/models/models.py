@@ -13,7 +13,6 @@ User = get_user_model()
 
 
 class Team(BaseModel, DateModelMixin):
-
     objects = TeamManager()
 
     users = models.ManyToManyField(
@@ -49,7 +48,6 @@ class Team(BaseModel, DateModelMixin):
 
 
 class UserTeam(BaseModel, DateModelMixin):
-
     objects = UserTeamManger()
 
     ROLE_EDITOR = "EDITOR"

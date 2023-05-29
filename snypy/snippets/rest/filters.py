@@ -14,7 +14,6 @@ class FileFilter(django_filters.FilterSet):
 
 
 class SnippetFilter(django_filters.FilterSet):
-
     favorite = django_filters.BooleanFilter(
         method="filter_is_favorite",
         label="Is favorite?",
@@ -64,7 +63,6 @@ class SnippetFilter(django_filters.FilterSet):
 
 
 class LabelFilter(django_filters.FilterSet):
-
     user = django_filters.NumberFilter(
         method="filter_user",
         label="User",

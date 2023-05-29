@@ -8,7 +8,6 @@ from teams.models import Team, UserTeam
 
 
 class TeamListAPIViewTestCase(BaseAPITestCase):
-
     url = reverse("team-list")
 
     def setUp(self):
@@ -48,7 +47,6 @@ class TeamListAPIViewTestCase(BaseAPITestCase):
 
 
 class TeamListAPICreateTestCase(BaseAPITestCase):
-
     url = reverse("team-list")
     create_data = {
         "name": "Team Python",

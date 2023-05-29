@@ -16,7 +16,6 @@ from .managers import (
 
 
 class Snippet(BaseModel, DateModelMixin):
-
     objects = SnippetManager()
 
     VISIBILITY_PUBLIC = "PUBLIC"
@@ -70,7 +69,6 @@ class Snippet(BaseModel, DateModelMixin):
 
 
 class File(BaseModel, DateModelMixin):
-
     objects = FileManager()
 
     snippet = models.ForeignKey(
@@ -109,7 +107,6 @@ class File(BaseModel, DateModelMixin):
 
 
 class Label(BaseModel, DateModelMixin):
-
     objects = LabelManager()
 
     snippets = models.ManyToManyField(
@@ -152,7 +149,6 @@ class Label(BaseModel, DateModelMixin):
 
 
 class Language(BaseModel):
-
     objects = LanguageManager()
 
     name = models.CharField(
@@ -167,7 +163,6 @@ class Language(BaseModel):
 
 
 class Extension(BaseModel):
-
     objects = ExtensionManager()
 
     language = models.ForeignKey(
@@ -192,7 +187,6 @@ class Extension(BaseModel):
 
 
 class SnippetLabel(BaseModel):
-
     objects = SnippetLabelManager()
 
     snippet = models.ForeignKey(
@@ -218,7 +212,6 @@ class SnippetLabel(BaseModel):
 
 
 class SnippetFavorite(BaseModel):
-
     objects = SnippetFavoriteManager()
 
     snippet = models.ForeignKey(

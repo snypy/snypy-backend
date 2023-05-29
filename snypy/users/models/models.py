@@ -5,7 +5,6 @@ from .managers import UserManager
 
 
 class User(AbstractUser):
-
     objects = UserManager()
 
     def get_avatar(self, size=25):

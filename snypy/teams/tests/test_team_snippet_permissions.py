@@ -9,7 +9,6 @@ from teams.models import Team, UserTeam
 
 
 class BaseTeamApiTestCase(BaseAPITestCase):
-
     url = reverse("snippet-list")
 
     def setUp(self):

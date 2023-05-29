@@ -8,7 +8,6 @@ from snippets.models import Snippet, SnippetFavorite
 
 
 class SnippetFavoriteListAPIViewTestCase(BaseAPITestCase):
-
     url = reverse("snippetfavorite-list")
 
     def setUp(self):
@@ -49,7 +48,6 @@ class SnippetFavoriteListAPIViewTestCase(BaseAPITestCase):
 
 
 class SnippetFavoriteListAPICreateTestCase(BaseAPITestCase):
-
     url = reverse("snippetfavorite-list")
 
     def setUp(self):
