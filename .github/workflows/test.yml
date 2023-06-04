@@ -22,6 +22,7 @@ jobs:
           - "3.8"
           - "3.9"
           - "3.10"
+          - "3.11"
 
     steps:
     - uses: actions/checkout@v3
@@ -42,10 +43,7 @@ jobs:
         black --check snypy/
 
     - name: Run tests
-      run: |
-        pip install coverage
-        coverage run manage.py test
-        coverage xml
+      run: pytest --cov=. --cov-report xml
       working-directory: snypy
 
     - name: Generate OpenAPI

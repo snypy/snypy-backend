@@ -33,7 +33,7 @@ class SnippetViewSet(BaseModelViewSet):
         "title",
         "description",
     )
-    filter_class = SnippetFilter
+    filterset_class = SnippetFilter
 
     def get_permissions(self):
         """
@@ -85,7 +85,7 @@ class FileViewSet(BaseModelViewSet):
     queryset = File.objects.all()
     serializer_class = FileSerializer
     search_fields = ("name",)
-    filter_class = FileFilter
+    filterset_class = FileFilter
 
     def get_permissions(self):
         """
@@ -102,7 +102,7 @@ class LabelViewSet(BaseModelViewSet):
     queryset = Label.objects.all()
     serializer_class = LabelSerializer
     search_fields = ("name",)
-    filter_class = LabelFilter
+    filterset_class = LabelFilter
 
     def get_queryset(self):
         viewable_snippets = Snippet.objects.viewable().values_list("pk", flat=True)
@@ -161,7 +161,7 @@ class LanguageViewSet(BaseModelViewSet):
 class SnippetLabelViewSet(BaseModelViewSet):
     queryset = SnippetLabel.objects.all()
     serializer_class = SnippetLabelSerializer
-    filter_class = SnippetLabelFilter
+    filterset_class = SnippetLabelFilter
 
 
 class ExtensionViewSet(BaseModelViewSet):
