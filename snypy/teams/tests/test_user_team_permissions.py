@@ -279,44 +279,34 @@ class TestTeamUserDetailAPIUpdate:
 
 @pytest.mark.django_db
 class TestTeamUserDetailAPIDelete:
-    @pytest.fixture(autouse=True)
-    def _setup(self, team, team_count, client, initial_users):
-        self.user1 = initial_users["user1"]
-        self.user2 = initial_users["user2"]
-        self.team = team
-        self.team_count = team_count
-        self.client = client
+    @pytest.fixture
+    def user_team_url(self, user2, team):
+        userteam = UserTeam.objects.create(user=user2, team=team)
+        yield reverse("userteam-detail", kwargs={"pk": userteam.pk})
 
-        self.userteam = UserTeam.objects.create(user=self.user2, team=self.team)
-        self.userteam_count = UserTeam.objects.count()
-        self.url = reverse("userteam-detail", kwargs={"pk": self.userteam.pk})
-
-        self.user1.user_permissions.add(
+    @pytest.mark.parametrize(
+        "role, status_code",
+        [(None, 404), (UserTeam.ROLE_SUBSCRIBER, 403), (UserTeam.ROLE_CONTRIBUTOR, 403), (UserTeam.ROLE_EDITOR, 204)],
+        ids=["no_assignment", "subscriber", "contributor", "editor"],
+    )
+    def test_user_in_group(self, client, team, role, status_code, user1, user_team_url):
+        """
+        User can delete other team assignments of team he is assigned to with
+        role editor only.
+        """
+        user1.user_permissions.add(
             Permission.objects.get(codename="delete_userteam"),
         )
 
-    def test_with_no_assignment(self):
-        response = self.client.delete(self.url)
-        assert response.status_code == 404
+        if role:
+            UserTeam.objects.create(user=user1, team=team, role=role)
 
-    def test_with_assignment_subscriber(self):
-        UserTeam.objects.create(user=self.user1, team=self.team, role=UserTeam.ROLE_SUBSCRIBER)
+        response = client.delete(user_team_url)
+        assert response.status_code == status_code
 
-        response = self.client.delete(self.url)
-        assert response.status_code == 403
-
-    def test_with_assignment_contributor(self):
-        UserTeam.objects.create(user=self.user1, team=self.team, role=UserTeam.ROLE_CONTRIBUTOR)
-
-        response = self.client.delete(self.url)
-        assert response.status_code == 403
-
-    def test_with_assignment_editor(self):
-        UserTeam.objects.create(user=self.user1, team=self.team, role=UserTeam.ROLE_EDITOR)
-
-        response = self.client.delete(self.url)
-        assert response.status_code == 204
-
-    def test_no_permission(self, auth_user2):
-        response = self.client.delete(self.url)
+    def test_no_permission(self, client, auth_user2, user_team_url):
+        """
+        User can delete other team assignments of team he is assigned to without the permission.
+        """
+        response = client.delete(user_team_url)
         assert response.status_code == 403

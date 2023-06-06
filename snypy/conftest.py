@@ -37,6 +37,16 @@ def initial_users():
     }
 
 
+@pytest.fixture
+def user1(client, initial_users):
+    return initial_users["user1"]
+
+
+@pytest.fixture
+def user2(client, initial_users):
+    return initial_users["user2"]
+
+
 @pytest.fixture(autouse=True)
 def auth_user1(client, initial_users):
     client.credentials(HTTP_AUTHORIZATION="Token " + initial_users["token1"].key)
