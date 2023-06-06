@@ -1,0 +1,2 @@
+[run]
+omit = manage.py,*/tests/*,*/migrations/*,*/wsgi.py,*/admin.py

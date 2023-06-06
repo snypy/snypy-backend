@@ -15,7 +15,7 @@ class TeamViewSet(BaseModelViewSet):
 class UserTeamViewSet(BaseModelViewSet):
     queryset = UserTeam.objects.all()
     serializer_class = UserTeamSerializer
-    filter_class = UserTeamFilter
+    filterset_class = UserTeamFilter
 
     def get_queryset(self):
         return self.queryset.viewable().annotate(

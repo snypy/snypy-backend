@@ -1,25 +1,33 @@
 import json
+import pytest
 
 from django.contrib.auth.models import Permission
 from django.urls import reverse
 
-from core.tests import BaseAPITestCase
 from teams.models import Team, UserTeam
 
 
-class TeamUserListAPIBaseTestCase(BaseAPITestCase):
-    def setUp(self):
-        super().setUp()
-
-        self.team = Team.objects.create(name="Team Python")
-        self.team_count = Team.objects.count()
+@pytest.fixture
+def team():
+    yield Team.objects.create(name="Team Python")
 
 
-class TeamUserListAPIViewTestCase(TeamUserListAPIBaseTestCase):
+@pytest.fixture
+def team_count():
+    yield Team.objects.count()
+
+
+@pytest.mark.django_db
+class TestTeamUserListAPIView:
     url = reverse("userteam-list")
 
-    def setUp(self):
-        super().setUp()
+    @pytest.fixture(autouse=True)
+    def _setup(self, team, team_count, client, initial_users):
+        self.user1 = initial_users["user1"]
+        self.user2 = initial_users["user2"]
+        self.team = team
+        self.team_count = team_count
+        self.client = client
 
         self.user1.user_permissions.add(
             Permission.objects.get(codename="view_userteam"),
@@ -37,8 +45,8 @@ class TeamUserListAPIViewTestCase(TeamUserListAPIBaseTestCase):
             userteam.save()
 
             response = self.client.get(self.url)
-            self.assertEqual(response.status_code, 200)
-            self.assertEqual(len(json.loads(response.content)), userteam_count + 1)
+            assert response.status_code == 200
+            assert len(json.loads(response.content)) == userteam_count + 1
 
     def test_foreign_user_userteam(self):
         """
@@ -52,8 +60,8 @@ class TeamUserListAPIViewTestCase(TeamUserListAPIBaseTestCase):
             userteam.save()
 
             response = self.client.get(self.url)
-            self.assertEqual(response.status_code, 200)
-            self.assertEqual(len(json.loads(response.content)), userteam_count)
+            assert response.status_code == 200
+            assert len(json.loads(response.content)) == userteam_count
 
     def test_foreign_user_userteam_assigned_team(self):
         """
@@ -72,20 +80,25 @@ class TeamUserListAPIViewTestCase(TeamUserListAPIBaseTestCase):
                 userteam2.save()
 
                 response = self.client.get(self.url)
-                self.assertEqual(response.status_code, 200)
-                self.assertEqual(len(json.loads(response.content)), userteam_count + 2)
+                assert response.status_code == 200
+                assert len(json.loads(response.content)) == userteam_count + 2
 
-    def test_no_permission(self):
-        self.api_authentication(self.token2)
+    def test_no_permission(self, auth_user2):
         response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 403)
+        assert response.status_code == 403
 
 
-class TeamUserListAPICreateTestCase(TeamUserListAPIBaseTestCase):
+@pytest.mark.django_db
+class TestTeamUserListAPICreate:
     url = reverse("userteam-list")
 
-    def setUp(self):
-        super().setUp()
+    @pytest.fixture(autouse=True)
+    def _setup(self, team, team_count, client, initial_users):
+        self.user1 = initial_users["user1"]
+        self.user2 = initial_users["user2"]
+        self.team = team
+        self.team_count = team_count
+        self.client = client
 
         self.user1.user_permissions.add(
             Permission.objects.get(codename="add_userteam"),
@@ -93,47 +106,44 @@ class TeamUserListAPICreateTestCase(TeamUserListAPIBaseTestCase):
 
     def test_with_no_assignment(self):
         response = self.client.post(self.url, {"user": self.user2.pk, "team": self.team.pk})
-        self.assertEqual(response.status_code, 400)
+        assert response.status_code == 400
 
     def test_with_assignment_subscriber(self):
         UserTeam.objects.create(user=self.user1, team=self.team, role=UserTeam.ROLE_SUBSCRIBER)
 
         response = self.client.post(self.url, {"user": self.user2.pk, "team": self.team.pk})
-        self.assertEqual(response.status_code, 400)
+        assert response.status_code == 400
 
     def test_with_assignment_contributor(self):
         UserTeam.objects.create(user=self.user1, team=self.team, role=UserTeam.ROLE_CONTRIBUTOR)
 
         response = self.client.post(self.url, {"user": self.user2.pk, "team": self.team.pk})
-        self.assertEqual(response.status_code, 400)
+        assert response.status_code == 400
 
     def test_with_assignment_editor(self):
         UserTeam.objects.create(user=self.user1, team=self.team, role=UserTeam.ROLE_EDITOR)
 
         response = self.client.post(self.url, {"user": self.user2.pk, "team": self.team.pk})
-        self.assertEqual(response.status_code, 201)
+        assert response.status_code == 201
 
-    def test_no_permission(self):
-        self.api_authentication(self.token2)
+    def test_no_permission(self, auth_user2):
         response = self.client.post(self.url, {"user": self.user2.pk, "team": self.team.pk})
-        self.assertEqual(response.status_code, 403)
+        assert response.status_code == 403
 
 
-class TeamUserDetailAPIBaseTestCase(TeamUserListAPIBaseTestCase):
-    def setUp(self):
-        super().setUp()
-
-        self.team = Team.objects.create(name="Team Python")
-        self.team_count = Team.objects.count()
+@pytest.mark.django_db
+class TestTeamUserDetailAPIView:
+    @pytest.fixture(autouse=True)
+    def _setup(self, team, team_count, client, initial_users):
+        self.user1 = initial_users["user1"]
+        self.user2 = initial_users["user2"]
+        self.team = team
+        self.team_count = team_count
+        self.client = client
 
         self.userteam = UserTeam.objects.create(user=self.user1, team=self.team)
         self.userteam_count = UserTeam.objects.count()
         self.url = reverse("userteam-detail", kwargs={"pk": self.userteam.pk})
-
-
-class TeamUserDetailAPIViewTestCase(TeamUserDetailAPIBaseTestCase):
-    def setUp(self):
-        super().setUp()
 
         self.user1.user_permissions.add(
             Permission.objects.get(codename="view_userteam"),
@@ -148,7 +158,7 @@ class TeamUserDetailAPIViewTestCase(TeamUserDetailAPIBaseTestCase):
             self.userteam.save()
 
             response = self.client.get(self.url)
-            self.assertEqual(response.status_code, 200)
+            assert response.status_code == 200
 
     def test_foreign_user_userteam(self):
         """
@@ -160,7 +170,7 @@ class TeamUserDetailAPIViewTestCase(TeamUserDetailAPIBaseTestCase):
             self.userteam.save()
 
             response = self.client.get(self.url)
-            self.assertEqual(response.status_code, 404)
+            assert response.status_code == 404
 
     def test_foreign_user_userteam_assigned_team(self):
         """
@@ -178,68 +188,75 @@ class TeamUserDetailAPIViewTestCase(TeamUserDetailAPIBaseTestCase):
                 userteam2.save()
 
                 response = self.client.get(url2)
-                self.assertEqual(response.status_code, 200)
+                assert response.status_code == 200
 
-    def test_no_permission(self):
-        self.api_authentication(self.token2)
+    def test_no_permission(self, auth_user2):
         response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 403)
+        assert response.status_code == 403
 
 
-class TeamUserDetailAPIUpdateTestCase(TeamUserDetailAPIBaseTestCase):
-    def setUp(self):
-        super().setUp()
+@pytest.mark.django_db
+class TestTeamUserDetailAPIUpdate:
+    @pytest.fixture(autouse=True)
+    def _setup(self, team, team_count, client, initial_users):
+        self.user1 = initial_users["user1"]
+        self.user2 = initial_users["user2"]
+        self.user3 = initial_users["user3"]
+        self.team = team
+        self.team_count = team_count
+        self.client = client
+
+        self.userteam = UserTeam.objects.create(user=self.user2, team=self.team)
+        self.userteam_count = UserTeam.objects.count()
+        self.url = reverse("userteam-detail", kwargs={"pk": self.userteam.pk})
 
         self.user1.user_permissions.add(
             Permission.objects.get(codename="change_userteam"),
         )
-        self.userteam.user = self.user2
-        self.userteam.save()
 
         self.edit_data = {"role": UserTeam.ROLE_EDITOR, "team": self.team.pk, "user": self.user2.pk}
 
     def test_with_no_assignment(self):
         response = self.client.put(self.url, self.edit_data)
-        self.assertEqual(response.status_code, 404)
+        assert response.status_code == 404
 
     def test_with_assignment_subscriber(self):
         UserTeam.objects.create(user=self.user1, team=self.team, role=UserTeam.ROLE_SUBSCRIBER)
 
         response = self.client.put(self.url, self.edit_data)
-        self.assertEqual(response.status_code, 403)
+        assert response.status_code == 403
 
         response = self.client.patch(self.url, {"role": UserTeam.ROLE_EDITOR})
-        self.assertEqual(response.status_code, 403)
+        assert response.status_code == 403
 
     def test_with_assignment_contributor(self):
         UserTeam.objects.create(user=self.user1, team=self.team, role=UserTeam.ROLE_CONTRIBUTOR)
 
         response = self.client.put(self.url, self.edit_data)
-        self.assertEqual(response.status_code, 403)
+        assert response.status_code == 403
 
         response = self.client.patch(self.url, {"role": UserTeam.ROLE_EDITOR})
-        self.assertEqual(response.status_code, 403)
+        assert response.status_code == 403
 
     def test_with_assignment_editor(self):
         UserTeam.objects.create(user=self.user1, team=self.team, role=UserTeam.ROLE_EDITOR)
 
         response = self.client.put(self.url, self.edit_data)
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
         response = self.client.patch(self.url, {"role": UserTeam.ROLE_EDITOR})
-        self.assertEqual(response.status_code, 200)
-
-        self.assertEquals(response.data["role"], UserTeam.ROLE_EDITOR)
+        assert response.status_code == 200
+        assert response.data["role"] == UserTeam.ROLE_EDITOR
 
     def test_change_user(self):
         UserTeam.objects.create(user=self.user1, team=self.team, role=UserTeam.ROLE_EDITOR)
         self.edit_data["user"] = self.user3.pk
 
         response = self.client.put(self.url, self.edit_data)
-        self.assertEqual(response.status_code, 400)
+        assert response.status_code == 400
 
         response = self.client.patch(self.url, {"user": self.user3.pk})
-        self.assertEqual(response.status_code, 400)
+        assert response.status_code == 400
 
     def test_change_team(self):
         UserTeam.objects.create(user=self.user1, team=self.team, role=UserTeam.ROLE_EDITOR)
@@ -247,55 +264,59 @@ class TeamUserDetailAPIUpdateTestCase(TeamUserDetailAPIBaseTestCase):
         self.edit_data["team"] = team.pk
 
         response = self.client.put(self.url, self.edit_data)
-        self.assertEqual(response.status_code, 400)
+        assert response.status_code == 400
 
         response = self.client.patch(self.url, {"team": team.pk})
-        self.assertEqual(response.status_code, 400)
+        assert response.status_code == 400
 
-    def test_no_permission(self):
-        self.api_authentication(self.token2)
-
+    def test_no_permission(self, auth_user2):
         response = self.client.put(self.url, self.edit_data)
-        self.assertEqual(response.status_code, 403)
+        assert response.status_code == 403
 
         response = self.client.patch(self.url, self.edit_data)
-        self.assertEqual(response.status_code, 403)
+        assert response.status_code == 403
 
 
-class TeamUserDetailAPIDeleteTestCase(TeamUserDetailAPIBaseTestCase):
-    def setUp(self):
-        super().setUp()
+@pytest.mark.django_db
+class TestTeamUserDetailAPIDelete:
+    @pytest.fixture(autouse=True)
+    def _setup(self, team, team_count, client, initial_users):
+        self.user1 = initial_users["user1"]
+        self.user2 = initial_users["user2"]
+        self.team = team
+        self.team_count = team_count
+        self.client = client
+
+        self.userteam = UserTeam.objects.create(user=self.user2, team=self.team)
+        self.userteam_count = UserTeam.objects.count()
+        self.url = reverse("userteam-detail", kwargs={"pk": self.userteam.pk})
 
         self.user1.user_permissions.add(
             Permission.objects.get(codename="delete_userteam"),
         )
-        self.userteam.user = self.user2
-        self.userteam.save()
 
     def test_with_no_assignment(self):
         response = self.client.delete(self.url)
-        self.assertEqual(response.status_code, 404)
+        assert response.status_code == 404
 
     def test_with_assignment_subscriber(self):
         UserTeam.objects.create(user=self.user1, team=self.team, role=UserTeam.ROLE_SUBSCRIBER)
 
         response = self.client.delete(self.url)
-        self.assertEqual(response.status_code, 403)
+        assert response.status_code == 403
 
     def test_with_assignment_contributor(self):
         UserTeam.objects.create(user=self.user1, team=self.team, role=UserTeam.ROLE_CONTRIBUTOR)
 
         response = self.client.delete(self.url)
-        self.assertEqual(response.status_code, 403)
+        assert response.status_code == 403
 
     def test_with_assignment_editor(self):
         UserTeam.objects.create(user=self.user1, team=self.team, role=UserTeam.ROLE_EDITOR)
 
         response = self.client.delete(self.url)
-        self.assertEqual(response.status_code, 204)
+        assert response.status_code == 204
 
-    def test_no_permission(self):
-        self.api_authentication(self.token2)
-
+    def test_no_permission(self, auth_user2):
         response = self.client.delete(self.url)
-        self.assertEqual(response.status_code, 403)
+        assert response.status_code == 403
