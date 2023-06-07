@@ -10,6 +10,6 @@ django-rest-passwordreset>=1.1,<1.4
 drf-spectacular[sidecar]>=0.20.1,<0.26
 django-environ>=0.7.0,<0.10
 django-gravatar2>=1.4.4,<1.5
-django-linear-migrations>=2.7.0,<2.8
+django-linear-migrations>=2.7.0,<2.9
 pytest-django>=4.5.2,<4.6
 pytest-cov>=4.1.0,<4.2
