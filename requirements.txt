@@ -1,7 +1,7 @@
 django>=4.2,<4.3
 djangorestframework>=3.12,<3.15
 markdown>=3.2,<3.5
-django-filter>=2.4,<21.2
+django-filter>=2.4,<23.4
 django-cors-headers>=4.0,<4.3
 django-userforeignkey>=0.3,<0.6
 django-rest-multitokenauth>=1.4.0,<1.6.0
