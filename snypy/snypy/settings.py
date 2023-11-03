@@ -1,6 +1,6 @@
 import os
 import environ
-
+import sentry_sdk
 
 env = environ.Env(
     # set casting, default value
@@ -21,8 +21,6 @@ DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS")
-
-# Application definition
 
 INSTALLED_APPS = [
     # core
@@ -170,3 +168,11 @@ SPECTACULAR_SETTINGS = {
     "REDOC_DIST": "SIDECAR",
     "COMPONENT_SPLIT_REQUEST": True,
 }
+
+# Sentry
+if env("SENTRY_ENABLED", default=False):
+    sentry_sdk.init(
+        dsn=env("SENTRY_DSN"),
+        traces_sample_rate=1.0,
+        profiles_sample_rate=1.0,
+    )
