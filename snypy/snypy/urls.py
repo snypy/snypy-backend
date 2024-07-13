@@ -59,7 +59,7 @@ urlpatterns = [
                             path(
                                 "token/",
                                 include(
-                                    ("django_rest_multitokenauth.urls", "django_rest_multitokenauth"),
+                                    ("drf_multitokenauth.urls", "drf_multitokenauth"),
                                     namespace="multi_token_auth",
                                 ),
                             ),
