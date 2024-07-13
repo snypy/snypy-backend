@@ -1,5 +1,5 @@
 -r base.txt
 
-django-linear-migrations>=2.8.0,<2.13
+django-linear-migrations>=2.8.0,<2.14
 pytest-django>=4.5.2,<4.7
 pytest-cov>=4.1.0,<5.1
