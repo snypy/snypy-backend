@@ -1,6 +1,6 @@
 django>=4.2,<5.2
 djangorestframework>=3.15.2,<3.16
-markdown>=3.2,<3.6
+markdown>=3.2,<3.8
 django-filter>=2.4,<24.4
 django-cors-headers>=4.0,<4.5
 django-userforeignkey>=0.3,<0.6
