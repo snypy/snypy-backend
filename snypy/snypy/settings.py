@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     "content_pages",
 ]
 
-if RUN_MODE is not "production":
+if RUN_MODE != "production":
     INSTALLED_APPS.append("django_linear_migrations")
 
 
