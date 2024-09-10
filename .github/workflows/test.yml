@@ -6,6 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DEBUG: True
+      RUN_MODE: test
       SECRET_KEY: changeme!
       ALLOWED_HOSTS: localhost,127.0.0.1
       DATABASE_URL: sqlite:////tmp/db.sqlite3

@@ -18,6 +18,7 @@ SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
+RUN_MODE = env("RUN_MODE")
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS")
@@ -40,7 +41,6 @@ INSTALLED_APPS = [
     "django_rest_passwordreset",
     "drf_spectacular",
     "drf_spectacular_sidecar",
-    "django_linear_migrations",
     # local
     "snippets",
     "shares",
@@ -48,6 +48,10 @@ INSTALLED_APPS = [
     "users",
     "content_pages",
 ]
+
+if RUN_MODE is not "production":
+    INSTALLED_APPS.append("django_linear_migrations")
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
