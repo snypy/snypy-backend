@@ -99,6 +99,7 @@ class TestLabelDetailAPIView:
         self.user1 = initial_users["user1"]
         self.user2 = initial_users["user2"]
         self.user1.user_permissions.add(Permission.objects.get(codename="view_label"))
+        self.user2.user_permissions.add(Permission.objects.get(codename="view_label"))
         self.url = label_detail_setup["url"]
         self.label = label_detail_setup["label"]
 

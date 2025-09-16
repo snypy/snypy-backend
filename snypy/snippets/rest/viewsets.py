@@ -104,9 +104,10 @@ class LabelViewSet(BaseModelViewSet):
     search_fields = ("name",)
     filterset_class = LabelFilter
 
-    def list(self, request, *args, **kwargs):
+    def get_queryset(self):
         viewable_snippets = Snippet.objects.viewable().values_list("pk", flat=True)
-        queryset = self.filter_queryset(self.get_queryset()).annotate(
+
+        return self.queryset.viewable().annotate(
             snippet_count=Count(
                 Case(
                     When(snippets__in=viewable_snippets, then=1),
@@ -114,14 +115,6 @@ class LabelViewSet(BaseModelViewSet):
                 )
             )
         )
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
 
 
 class LanguageViewSet(BaseModelViewSet):
