@@ -105,16 +105,18 @@ class LabelViewSet(BaseModelViewSet):
     filterset_class = LabelFilter
 
     def get_queryset(self):
-        viewable_snippets = Snippet.objects.viewable().values_list("pk", flat=True)
+        if self.action == "list":
+            viewable_snippets = Snippet.objects.viewable().values_list("pk", flat=True)
 
-        return self.queryset.viewable().annotate(
-            snippet_count=Count(
-                Case(
-                    When(snippets__in=viewable_snippets, then=1),
-                    output_field=CharField(),
+            return self.queryset.viewable().annotate(
+                snippet_count=Count(
+                    Case(
+                        When(snippets__in=viewable_snippets, then=1),
+                        output_field=CharField(),
+                    )
                 )
             )
-        )
+        return self.queryset.viewable()
 
 
 class LanguageViewSet(BaseModelViewSet):
