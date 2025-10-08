@@ -45,12 +45,12 @@ dependencies = [
 [project.optional-dependencies]
 test = [
     "django-linear-migrations>=2.8.0,<2.20",
-    "pytest-django>=4.5.2,<4.10",
+    "pytest-django>=4.5.2,<4.12",
     "pytest-cov>=4.1.0,<7.1",
 ]
 dev = [
     "django-linear-migrations>=2.8.0,<2.20",
-    "pytest-django>=4.5.2,<4.10",
+    "pytest-django>=4.5.2,<4.12",
     "pytest-cov>=4.1.0,<7.1",
     "black>=23.0.0",
 ]
