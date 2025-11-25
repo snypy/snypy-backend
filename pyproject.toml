@@ -39,7 +39,7 @@ dependencies = [
     "drf-spectacular[sidecar]>=0.26.2,<0.29",
     "django-environ>=0.10.0,<0.13",
     "django-gravatar2>=1.4.4,<1.5",
-    "sentry-sdk>=2.9.0,<2.43",
+    "sentry-sdk>=2.9.0,<2.47",
 ]
 
 [project.optional-dependencies]
