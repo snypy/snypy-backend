@@ -27,7 +27,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "django>=4.2,<5.2",
+    "django>=4.2,<6.1",
     "djangorestframework>=3.15.2,<3.17",
     "markdown>=3.2,<3.10",
     "django-filter>=2.4,<25.2",
