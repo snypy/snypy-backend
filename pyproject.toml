@@ -52,7 +52,7 @@ dev = [
     "django-linear-migrations>=2.8.0,<2.20",
     "pytest-django>=4.5.2,<4.12",
     "pytest-cov>=4.1.0,<7.1",
-    "black>=23.0.0",
+    "black>=25.11.0",
 ]
 
 [tool.black]
