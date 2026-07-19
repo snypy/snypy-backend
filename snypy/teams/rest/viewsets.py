@@ -18,11 +18,15 @@ class UserTeamViewSet(BaseModelViewSet):
     filterset_class = UserTeamFilter
 
     def get_queryset(self):
-        return self.queryset.viewable().annotate(
-            snippet_count=Count(
-                Case(
-                    When(team__snippets__user=F("user"), then=1),
-                    output_field=CharField(),
+        return (
+            self.queryset.viewable()
+            .select_related("user")
+            .annotate(
+                snippet_count=Count(
+                    Case(
+                        When(team__snippets__user=F("user"), then=1),
+                        output_field=CharField(),
+                    )
                 )
             )
         )
