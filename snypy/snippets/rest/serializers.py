@@ -220,3 +220,32 @@ class SnippetFavoriteActionSerializer(BaseSerializer):
             "pk",
             "url",
         )
+
+
+class SnippetExportFileSerializer(serializers.ModelSerializer):
+    language = serializers.SlugRelatedField(slug_field="name", read_only=True)
+
+    class Meta:
+        model = File
+        fields = (
+            "name",
+            "language",
+            "content",
+        )
+
+
+class SnippetExportSerializer(serializers.ModelSerializer):
+    labels = serializers.SlugRelatedField(slug_field="name", many=True, read_only=True)
+    files = SnippetExportFileSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Snippet
+        fields = (
+            "title",
+            "description",
+            "visibility",
+            "created_date",
+            "modified_date",
+            "labels",
+            "files",
+        )
