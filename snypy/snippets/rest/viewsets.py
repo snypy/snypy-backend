@@ -1,5 +1,8 @@
+from datetime import date
+
 from django.db.models import Count, CharField, When, Case, Q
 from django.db import IntegrityError
+from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework.exceptions import ValidationError
@@ -13,6 +16,7 @@ from ..models import Snippet, File, Label, Language, SnippetLabel, Extension, Sn
 from .filters import FileFilter, SnippetFilter, LabelFilter, SnippetLabelFilter
 from .serializers import (
     SnippetFavoriteActionSerializer,
+    SnippetExportSerializer,
     SnippetSerializer,
     FileSerializer,
     LabelSerializer,
@@ -78,6 +82,24 @@ class SnippetViewSet(BaseModelViewSet):
 
         serializer = SnippetFavoriteActionSerializer(favorite, context={"request": request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @extend_schema(responses={200: None})
+    @action(detail=False, methods=["GET"], serializer_class=SnippetExportSerializer)
+    def export(self, request):
+        """
+        Export all snippets matching the current filter as a portable JSON document
+        """
+        queryset = self.filter_queryset(self.get_queryset()).prefetch_related("files__language")
+        serializer = self.get_serializer(queryset, many=True)
+        response = Response(
+            {
+                "format": "snypy-export",
+                "version": 1,
+                "snippets": serializer.data,
+            }
+        )
+        response["Content-Disposition"] = f'attachment; filename="snypy-export-{date.today().isoformat()}.json"'
+        return response
 
 
 class FileViewSet(BaseModelViewSet):

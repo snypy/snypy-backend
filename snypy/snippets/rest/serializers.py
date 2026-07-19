@@ -222,7 +222,7 @@ class SnippetFavoriteActionSerializer(BaseSerializer):
         )
 
 
-class SnippetExportFileSerializer(serializers.ModelSerializer):
+class SnippetExportFileSerializer(BaseSerializer):
     language = serializers.SlugRelatedField(slug_field="name", read_only=True)
 
     class Meta:
@@ -234,7 +234,7 @@ class SnippetExportFileSerializer(serializers.ModelSerializer):
         )
 
 
-class SnippetExportSerializer(serializers.ModelSerializer):
+class SnippetExportSerializer(BaseSerializer):
     labels = serializers.SlugRelatedField(slug_field="name", many=True, read_only=True)
     files = SnippetExportFileSerializer(many=True, read_only=True)
 
