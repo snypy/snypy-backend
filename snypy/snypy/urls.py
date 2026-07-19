@@ -21,7 +21,6 @@ from django.contrib import admin
 
 from rest_registration.api.views import register, verify_registration
 
-
 # Invoked to load REST URLs
 from core.utils.rest_router import router
 from snippets import urls as snippets_urls
@@ -31,7 +30,6 @@ from content_pages import urls as content_page_urls
 
 
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
-
 
 urlpatterns = [
     re_path(r"^admin/", admin.site.urls),

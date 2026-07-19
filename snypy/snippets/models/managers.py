@@ -10,7 +10,6 @@ from .querysets import (
     SnippetFavoriteQuerySet,
 )
 
-
 SnippetManager = BaseManager.from_queryset(SnippetQuerySet)
 FileManager = BaseManager.from_queryset(FileQuerySet)
 LabelManager = BaseManager.from_queryset(LabelQuerySet)

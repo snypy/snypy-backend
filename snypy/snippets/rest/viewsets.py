@@ -22,7 +22,6 @@ from .serializers import (
     SnippetFavoriteSerializer,
 )
 
-
 User = get_user_model()
 
 

@@ -8,7 +8,6 @@ from django_userforeignkey.request import get_current_user
 from core.models import BaseModel, DateModelMixin
 from .managers import TeamManager, UserTeamManger
 
-
 User = get_user_model()
 
 
