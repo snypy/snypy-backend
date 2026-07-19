@@ -4,5 +4,4 @@ from .querysets import (
     ContentPageQuerySet,
 )
 
-
 ContentPageManager = BaseManager.from_queryset(ContentPageQuerySet)

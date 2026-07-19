@@ -3,7 +3,6 @@ from django.contrib.auth import get_user_model
 from drf_multitokenauth.models import MultiToken
 from rest_framework.test import APIClient
 
-
 User = get_user_model()
 
 

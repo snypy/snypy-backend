@@ -27,31 +27,31 @@ classifiers = [
 ]
 
 dependencies = [
-    "django>=4.2,<5.2",
-    "djangorestframework>=3.15.2,<3.17",
+    "django>=4.2,<5.3",
+    "djangorestframework>=3.15.2,<3.18",
     "markdown>=3.2,<3.11",
-    "django-filter>=2.4,<25.2",
+    "django-filter>=2.4,<26.2",
     "django-cors-headers>=4.0,<4.10",
-    "django-userforeignkey>=0.3,<0.6",
+    "django-userforeignkey>=0.3,<0.7",
     "drf-multitokenauth>=2.0.0,<2.2.0",
     "django-rest-registration>=0.8.3,<0.10",
-    "django-rest-passwordreset>=1.1,<1.6",
-    "drf-spectacular[sidecar]>=0.26.2,<0.30",
-    "django-environ>=0.10.0,<0.13",
+    "django-rest-passwordreset>=1.1,<1.7",
+    "drf-spectacular[sidecar]>=0.26.2,<0.31",
+    "django-environ>=0.10.0,<0.15",
     "django-gravatar2>=1.4.4,<1.5",
-    "sentry-sdk>=2.9.0,<2.47",
+    "sentry-sdk>=2.9.0,<2.67",
 ]
 
 [project.optional-dependencies]
 test = [
     "django-linear-migrations>=2.8.0,<2.20",
-    "pytest-django>=4.5.2,<4.12",
-    "pytest-cov>=4.1.0,<7.1",
+    "pytest-django>=4.5.2,<4.13",
+    "pytest-cov>=4.1.0,<7.2",
 ]
 dev = [
     "django-linear-migrations>=2.8.0,<2.20",
-    "pytest-django>=4.5.2,<4.12",
-    "pytest-cov>=4.1.0,<7.1",
+    "pytest-django>=4.5.2,<4.13",
+    "pytest-cov>=4.1.0,<7.2",
     "black>=23.0.0",
 ]
 

@@ -10,7 +10,6 @@ from .rest.viewsets import (
     SnippetFavoriteViewSet,
 )
 
-
 # Register rest views
 router.register(r"snippet", SnippetViewSet)
 router.register(r"file", FileViewSet)
