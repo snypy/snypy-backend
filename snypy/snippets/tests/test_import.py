@@ -66,3 +66,88 @@ class TestSnippetImportSerializerValidation:
 
         serializer = SnippetImportSerializer(data=document)
         assert not serializer.is_valid()
+
+
+def save_import(document, user):
+    """Validate and save an import document as the given user."""
+    from snippets.rest.serializers import SnippetImportSerializer
+
+    class FakeRequest:
+        pass
+
+    request = FakeRequest()
+    request.user = user
+    serializer = SnippetImportSerializer(data=document, context={"request": request})
+    assert serializer.is_valid(), serializer.errors
+    return serializer.save()
+
+
+@pytest.mark.django_db
+class TestSnippetImportSave:
+    @pytest.fixture(autouse=True)
+    def _setup(self, initial_users):
+        self.user1 = initial_users["user1"]
+
+    def test_creates_snippet_files_labels(self):
+        result = save_import(import_document(), self.user1)
+
+        assert result == {"snippets_created": 1, "labels_created": 1, "languages_created": 1}
+
+        snippet = Snippet.objects.get(title="Sort dict by value")
+        assert snippet.user == self.user1
+        assert snippet.team is None
+        assert snippet.visibility == Snippet.VISIBILITY_PRIVATE
+        assert list(snippet.labels.values_list("name", flat=True)) == ["python"]
+
+        file = snippet.files.get()
+        assert file.name == "sort.py"
+        assert file.language.name == "Python"
+        assert file.content == "sorted(d, key=d.get)"
+
+    def test_reuses_existing_label_in_personal_scope(self):
+        existing = Label.objects.create(name="python", user=self.user1)
+
+        result = save_import(import_document(), self.user1)
+
+        assert result["labels_created"] == 0
+        snippet = Snippet.objects.get(title="Sort dict by value")
+        assert snippet.labels.get() == existing
+
+    def test_does_not_reuse_foreign_personal_label(self, initial_users):
+        Label.objects.create(name="python", user=initial_users["user2"])
+
+        result = save_import(import_document(), self.user1)
+
+        assert result["labels_created"] == 1
+        assert Label.objects.filter(name="python").count() == 2
+
+    def test_reuses_existing_language(self):
+        Language.objects.create(name="Python")
+
+        result = save_import(import_document(), self.user1)
+
+        assert result["languages_created"] == 0
+        assert Language.objects.filter(name="Python").count() == 1
+
+    def test_team_scope_label_created_in_team(self):
+        team = Team.objects.create(name="Team Python")
+
+        document = import_document()
+        # bypass validate_team (needs request middleware) — set validated team directly
+        from snippets.rest.serializers import SnippetImportSerializer
+
+        class FakeRequest:
+            pass
+
+        request = FakeRequest()
+        request.user = self.user1
+        serializer = SnippetImportSerializer(data=document, context={"request": request})
+        assert serializer.is_valid(), serializer.errors
+        serializer.validated_data["team"] = team
+        result = serializer.save()
+
+        assert result["snippets_created"] == 1
+        snippet = Snippet.objects.get(title="Sort dict by value")
+        assert snippet.team == team
+        label = snippet.labels.get()
+        assert label.team == team

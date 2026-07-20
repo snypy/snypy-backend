@@ -1,3 +1,5 @@
+from django.db import transaction
+
 from rest_framework import serializers
 from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.fields import SerializerMethodField, IntegerField
@@ -313,3 +315,58 @@ class SnippetImportSerializer(serializers.Serializer):
                 return team
 
         raise serializers.ValidationError("Please select a valid Team")
+
+    def save(self, **kwargs):
+        user = self.context["request"].user
+        team = self.validated_data["team"]
+        entries = self.validated_data["snippets"]
+
+        if team is not None:
+            label_scope_filter = {"team": team}
+        else:
+            label_scope_filter = {"user": user, "team": None}
+
+        labels_created = 0
+        languages_created = 0
+        label_cache = {}
+        language_cache = {}
+
+        with transaction.atomic():
+            for entry in entries:
+                snippet = Snippet.objects.create(
+                    user=user,
+                    team=team,
+                    title=entry["title"],
+                    description=entry["description"],
+                    visibility=entry["visibility"],
+                )
+
+                for label_name in entry["labels"]:
+                    label = label_cache.get(label_name)
+                    if label is None:
+                        label = Label.objects.filter(name=label_name, **label_scope_filter).first()
+                        if label is None:
+                            label = Label.objects.create(name=label_name, user=user, team=team)
+                            labels_created += 1
+                        label_cache[label_name] = label
+                    SnippetLabel.objects.create(snippet=snippet, label=label)
+
+                for file_entry in entry["files"]:
+                    language = language_cache.get(file_entry["language"])
+                    if language is None:
+                        language, created = Language.objects.get_or_create(name=file_entry["language"])
+                        if created:
+                            languages_created += 1
+                        language_cache[file_entry["language"]] = language
+                    File.objects.create(
+                        snippet=snippet,
+                        language=language,
+                        name=file_entry["name"],
+                        content=file_entry["content"],
+                    )
+
+        return {
+            "snippets_created": len(entries),
+            "labels_created": labels_created,
+            "languages_created": languages_created,
+        }
