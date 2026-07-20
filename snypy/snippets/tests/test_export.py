@@ -89,9 +89,22 @@ class TestSnippetExportEndpoint:
         titles = [entry["title"] for entry in response.json()["snippets"]]
         assert titles == ["Sort dict by value"]
 
+    def test_export_respects_team_filter(self, client):
+        from teams.models import Team, UserTeam
+
+        team = Team.objects.create(name="Team Python")
+        UserTeam.objects.create(user=self.user1, team=team)
+        Snippet.objects.create(user=self.user1, team=team, title="Team snippet")
+        Snippet.objects.create(user=self.user1, title="Personal snippet")
+
+        response = client.get(self.url, {"team": team.pk})
+        assert response.status_code == 200
+        titles = [entry["title"] for entry in response.json()["snippets"]]
+        assert titles == ["Team snippet"]
+
     def test_export_ordered_by_pk(self, client):
-        second = Snippet.objects.create(user=self.user1, title="B snippet")
-        first = Snippet.objects.create(user=self.user1, title="A snippet")
+        Snippet.objects.create(user=self.user1, title="B snippet")
+        Snippet.objects.create(user=self.user1, title="A snippet")
 
         response = client.get(self.url)
         titles = [entry["title"] for entry in response.json()["snippets"]]
