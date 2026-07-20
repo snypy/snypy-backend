@@ -219,7 +219,11 @@ class TestSnippetImportEndpoint:
         assert response.status_code == 400
         assert Snippet.objects.count() == 0
 
-    def test_requires_add_snippet_permission(self, client, auth_user2):
+    def test_requires_add_snippet_permission(self, client, auth_user2, initial_users):
+        initial_users["user2"].user_permissions.add(
+            Permission.objects.get(codename="add_label"),
+        )
+
         response = client.post(self.url, import_document(), format="json")
         assert response.status_code == 403
 
@@ -249,6 +253,11 @@ class TestSnippetImportEndpoint:
         assert response.json() == {"snippets_created": 2, "labels_created": 1, "languages_created": 1}
         assert Label.objects.filter(name="python").count() == 1
         assert Language.objects.filter(name="Python").count() == 1
+
+    def test_import_requires_authentication(self, client):
+        client.credentials()
+        response = client.post(self.url, import_document(), format="json")
+        assert response.status_code == 401
 
 
 @pytest.mark.django_db

@@ -80,3 +80,24 @@ class TestSnippetExportEndpoint:
     def test_export_requires_view_permission(self, client, auth_user2):
         response = client.get(self.url)
         assert response.status_code == 403
+
+    def test_export_respects_search(self, client, snippet_with_relations):
+        Snippet.objects.create(user=self.user1, title="Another one", visibility=Snippet.VISIBILITY_PRIVATE)
+
+        response = client.get(self.url, {"search": "Sort dict"})
+        assert response.status_code == 200
+        titles = [entry["title"] for entry in response.json()["snippets"]]
+        assert titles == ["Sort dict by value"]
+
+    def test_export_ordered_by_pk(self, client):
+        second = Snippet.objects.create(user=self.user1, title="B snippet")
+        first = Snippet.objects.create(user=self.user1, title="A snippet")
+
+        response = client.get(self.url)
+        titles = [entry["title"] for entry in response.json()["snippets"]]
+        assert titles == ["B snippet", "A snippet"]
+
+    def test_export_requires_authentication(self, client):
+        client.credentials()
+        response = client.get(self.url)
+        assert response.status_code == 401

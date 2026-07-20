@@ -2,12 +2,12 @@ from datetime import date
 
 from django.db.models import Count, CharField, When, Case, Q
 from django.db import IntegrityError
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework.exceptions import ValidationError, PermissionDenied
 from rest_framework.decorators import action
-from rest_framework import status
+from rest_framework import status, serializers
 
 from core.rest.viewsets import BaseModelViewSet
 from teams.models import Team, get_user_model
@@ -84,13 +84,24 @@ class SnippetViewSet(BaseModelViewSet):
         serializer = SnippetFavoriteActionSerializer(favorite, context={"request": request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @extend_schema(responses={200: None})
+    @extend_schema(
+        responses={
+            200: inline_serializer(
+                name="SnippetExportDocument",
+                fields={
+                    "format": serializers.CharField(),
+                    "version": serializers.IntegerField(),
+                    "snippets": SnippetExportSerializer(many=True),
+                },
+            )
+        }
+    )
     @action(detail=False, methods=["GET"], serializer_class=SnippetExportSerializer)
     def export(self, request):
         """
         Export all snippets matching the current filter as a portable JSON document
         """
-        queryset = self.filter_queryset(self.get_queryset()).prefetch_related("files__language")
+        queryset = self.filter_queryset(self.get_queryset()).prefetch_related("files__language").order_by("pk")
         serializer = self.get_serializer(queryset, many=True)
         response = Response(
             {
@@ -102,7 +113,19 @@ class SnippetViewSet(BaseModelViewSet):
         response["Content-Disposition"] = f'attachment; filename="snypy-export-{date.today().isoformat()}.json"'
         return response
 
-    @extend_schema(request=SnippetImportSerializer, responses={201: None})
+    @extend_schema(
+        request=SnippetImportSerializer,
+        responses={
+            201: inline_serializer(
+                name="SnippetImportResult",
+                fields={
+                    "snippets_created": serializers.IntegerField(),
+                    "labels_created": serializers.IntegerField(),
+                    "languages_created": serializers.IntegerField(),
+                },
+            )
+        },
+    )
     @action(
         detail=False,
         methods=["POST"],
