@@ -249,3 +249,71 @@ class SnippetExportSerializer(BaseSerializer):
             "labels",
             "files",
         )
+
+
+class SnippetImportFileSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=255)
+    language = serializers.CharField(max_length=255)
+    content = serializers.CharField(allow_blank=True, default="", trim_whitespace=False)
+
+
+class IndexedErrorListSerializer(serializers.ListSerializer):
+    """Reports child validation errors keyed by index, omitting valid entries.
+
+    DRF's default ListSerializer reports errors as a positional list padded
+    with empty dicts for valid entries (e.g. [{}, {"title": [...]}]), which
+    makes it awkward to tell which indices actually failed. This reports
+    only the failing indices, e.g. {1: {"title": [...]}}.
+    """
+
+    def to_internal_value(self, data):
+        if not isinstance(data, list):
+            return super().to_internal_value(data)
+
+        ret = []
+        errors = {}
+
+        for index, item in enumerate(data):
+            try:
+                ret.append(self.child.run_validation(item))
+            except serializers.ValidationError as exc:
+                errors[index] = exc.detail
+
+        if errors:
+            raise serializers.ValidationError(errors)
+
+        return ret
+
+
+class SnippetImportEntrySerializer(serializers.Serializer):
+    title = serializers.CharField(max_length=255)
+    description = serializers.CharField(allow_blank=True, default="", trim_whitespace=False)
+    visibility = serializers.ChoiceField(choices=Snippet.VISIBILITIES, default=Snippet.VISIBILITY_PRIVATE)
+    labels = serializers.ListField(child=serializers.CharField(max_length=255), default=list)
+    files = SnippetImportFileSerializer(many=True, default=list)
+
+    class Meta:
+        list_serializer_class = IndexedErrorListSerializer
+
+
+class SnippetImportSerializer(serializers.Serializer):
+    format = serializers.ChoiceField(choices=["snypy-export"])
+    version = serializers.IntegerField(min_value=1, max_value=1)
+    team = serializers.PrimaryKeyRelatedField(
+        queryset=Team.objects.all(), required=False, allow_null=True, default=None
+    )
+    snippets = SnippetImportEntrySerializer(many=True)
+
+    def validate_team(self, team):
+        if team is None:
+            return None
+
+        if Team.objects.viewable().filter(pk=team.pk).exists():
+            if UserTeam.objects.filter(
+                team=team,
+                user=get_current_user(),
+                role__in=[UserTeam.ROLE_CONTRIBUTOR, UserTeam.ROLE_EDITOR],
+            ).exists():
+                return team
+
+        raise serializers.ValidationError("Please select a valid Team")
