@@ -5,7 +5,7 @@ from django.db import IntegrityError
 from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, PermissionDenied
 from rest_framework.decorators import action
 from rest_framework import status
 
@@ -17,6 +17,7 @@ from .filters import FileFilter, SnippetFilter, LabelFilter, SnippetLabelFilter
 from .serializers import (
     SnippetFavoriteActionSerializer,
     SnippetExportSerializer,
+    SnippetImportSerializer,
     SnippetSerializer,
     FileSerializer,
     LabelSerializer,
@@ -100,6 +101,26 @@ class SnippetViewSet(BaseModelViewSet):
         )
         response["Content-Disposition"] = f'attachment; filename="snypy-export-{date.today().isoformat()}.json"'
         return response
+
+    @extend_schema(request=SnippetImportSerializer, responses={201: None})
+    @action(
+        detail=False,
+        methods=["POST"],
+        url_path="import",
+        url_name="import",
+        serializer_class=SnippetImportSerializer,
+    )
+    def import_snippets(self, request):
+        """
+        Import a previously exported document into personal or team scope
+        """
+        if not request.user.has_perm("snippets.add_label"):
+            raise PermissionDenied("You need permission to add labels to import snippets")
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        result = serializer.save()
+        return Response(result, status=status.HTTP_201_CREATED)
 
 
 class FileViewSet(BaseModelViewSet):

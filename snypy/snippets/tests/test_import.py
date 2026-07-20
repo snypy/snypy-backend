@@ -170,3 +170,82 @@ class TestSnippetImportSave:
         assert result["labels_created"] == 1
         snippet = Snippet.objects.get(title="Sort dict by value")
         assert snippet.snippet_labels.count() == 1
+
+
+@pytest.mark.django_db
+class TestSnippetImportEndpoint:
+    url = reverse("snippet-import")
+
+    @pytest.fixture(autouse=True)
+    def _setup(self, initial_users):
+        self.user1 = initial_users["user1"]
+        self.user1.user_permissions.add(
+            Permission.objects.get(codename="add_snippet"),
+            Permission.objects.get(codename="add_label"),
+        )
+
+    def test_import_creates_snippets(self, client):
+        response = client.post(self.url, import_document(), format="json")
+        assert response.status_code == 201
+        assert response.json() == {"snippets_created": 1, "labels_created": 1, "languages_created": 1}
+        assert Snippet.objects.get(title="Sort dict by value").user == self.user1
+
+    def test_invalid_entry_imports_nothing(self, client):
+        document = import_document()
+        document["snippets"].append({"title": "x" * 300})
+
+        response = client.post(self.url, document, format="json")
+        assert response.status_code == 400
+        assert "1" in response.json()["snippets"]
+        assert Snippet.objects.count() == 0
+
+    def test_import_into_team(self, client):
+        team = Team.objects.create(name="Team Python")
+        UserTeam.objects.filter(team=team).delete()
+        UserTeam.objects.create(user=self.user1, team=team, role=UserTeam.ROLE_CONTRIBUTOR)
+
+        response = client.post(self.url, import_document(team=team.pk), format="json")
+        assert response.status_code == 201
+        snippet = Snippet.objects.get(title="Sort dict by value")
+        assert snippet.team == team
+        assert snippet.labels.get().team == team
+
+    def test_invalid_team_role_rejected(self, client, initial_users):
+        team = Team.objects.create(name="Team Python")
+        UserTeam.objects.filter(team=team).delete()
+        UserTeam.objects.create(user=self.user1, team=team, role=UserTeam.ROLE_SUBSCRIBER)
+
+        response = client.post(self.url, import_document(team=team.pk), format="json")
+        assert response.status_code == 400
+        assert Snippet.objects.count() == 0
+
+    def test_requires_add_snippet_permission(self, client, auth_user2):
+        response = client.post(self.url, import_document(), format="json")
+        assert response.status_code == 403
+
+    def test_requires_add_label_permission(self, client):
+        self.user1.user_permissions.remove(
+            Permission.objects.get(codename="add_label"),
+        )
+
+        response = client.post(self.url, import_document(), format="json")
+        assert response.status_code == 403
+        assert Snippet.objects.count() == 0
+
+    def test_shared_label_and_language_counted_once(self, client):
+        document = import_document()
+        document["snippets"].append(
+            {
+                "title": "Second snippet",
+                "description": "",
+                "visibility": "PRIVATE",
+                "labels": ["python"],
+                "files": [{"name": "b.py", "language": "Python", "content": "print(2)"}],
+            }
+        )
+
+        response = client.post(self.url, document, format="json")
+        assert response.status_code == 201
+        assert response.json() == {"snippets_created": 2, "labels_created": 1, "languages_created": 1}
+        assert Label.objects.filter(name="python").count() == 1
+        assert Language.objects.filter(name="Python").count() == 1
