@@ -249,3 +249,39 @@ class TestSnippetImportEndpoint:
         assert response.json() == {"snippets_created": 2, "labels_created": 1, "languages_created": 1}
         assert Label.objects.filter(name="python").count() == 1
         assert Language.objects.filter(name="Python").count() == 1
+
+
+@pytest.mark.django_db
+class TestExportImportRoundTrip:
+    export_url = reverse("snippet-export")
+    import_url = reverse("snippet-import")
+
+    def test_round_trip(self, client, initial_users):
+        user1 = initial_users["user1"]
+        user2 = initial_users["user2"]
+        user1.user_permissions.add(Permission.objects.get(codename="view_snippet"))
+        user2.user_permissions.add(
+            Permission.objects.get(codename="add_snippet"),
+            Permission.objects.get(codename="add_label"),
+        )
+
+        snippet = Snippet.objects.create(user=user1, title="Original", description="desc")
+        language = Language.objects.create(name="Python")
+        File.objects.create(snippet=snippet, language=language, name="a.py", content="print(1)")
+        label = Label.objects.create(name="python", user=user1)
+        SnippetLabel.objects.create(snippet=snippet, label=label)
+
+        document = client.get(self.export_url).json()
+
+        client.credentials(HTTP_AUTHORIZATION="Token " + initial_users["token2"].key)
+        response = client.post(self.import_url, document, format="json")
+        assert response.status_code == 201
+
+        imported = Snippet.objects.filter(user=user2).get()
+        assert imported.title == "Original"
+        assert imported.description == "desc"
+        assert list(imported.labels.values_list("name", flat=True)) == ["python"]
+        file = imported.files.get()
+        assert file.name == "a.py"
+        assert file.content == "print(1)"
+        assert file.language == language
