@@ -262,27 +262,19 @@ class IndexedErrorListSerializer(serializers.ListSerializer):
 
     DRF's default ListSerializer reports errors as a positional list padded
     with empty dicts for valid entries (e.g. [{}, {"title": [...]}]), which
-    makes it awkward to tell which indices actually failed. This reports
-    only the failing indices, e.g. {1: {"title": [...]}}.
+    makes it awkward to tell which indices actually failed. This translates
+    that into only the failing indices, e.g. {1: {"title": [...]}}, while
+    still delegating to DRF's own validation (allow_empty, min_length,
+    max_length, run_child_validation, etc.).
     """
 
     def to_internal_value(self, data):
-        if not isinstance(data, list):
+        try:
             return super().to_internal_value(data)
-
-        ret = []
-        errors = {}
-
-        for index, item in enumerate(data):
-            try:
-                ret.append(self.child.run_validation(item))
-            except serializers.ValidationError as exc:
-                errors[index] = exc.detail
-
-        if errors:
-            raise serializers.ValidationError(errors)
-
-        return ret
+        except serializers.ValidationError as exc:
+            if isinstance(exc.detail, list):
+                raise serializers.ValidationError({index: detail for index, detail in enumerate(exc.detail) if detail})
+            raise
 
 
 class SnippetImportEntrySerializer(serializers.Serializer):
@@ -305,6 +297,10 @@ class SnippetImportSerializer(serializers.Serializer):
     snippets = SnippetImportEntrySerializer(many=True)
 
     def validate_team(self, team):
+        # get_current_user() resolves the user from django-userforeignkey's
+        # thread-local, populated by request middleware -- not from
+        # serializer context. Serializer-level tests without a real request
+        # cannot exercise this validation.
         if team is None:
             return None
 
