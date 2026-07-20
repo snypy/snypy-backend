@@ -151,3 +151,22 @@ class TestSnippetImportSave:
         assert snippet.team == team
         label = snippet.labels.get()
         assert label.team == team
+
+    def test_duplicate_language_rows_do_not_break_import(self):
+        Language.objects.create(name="Python")
+        Language.objects.create(name="Python")
+
+        result = save_import(import_document(), self.user1)
+
+        assert result["languages_created"] == 0
+        assert Language.objects.filter(name="Python").count() == 2
+
+    def test_duplicate_label_names_in_entry_link_once(self):
+        document = import_document()
+        document["snippets"][0]["labels"] = ["python", "python"]
+
+        result = save_import(document, self.user1)
+
+        assert result["labels_created"] == 1
+        snippet = Snippet.objects.get(title="Sort dict by value")
+        assert snippet.snippet_labels.count() == 1

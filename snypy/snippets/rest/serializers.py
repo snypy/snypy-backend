@@ -341,7 +341,7 @@ class SnippetImportSerializer(serializers.Serializer):
                     visibility=entry["visibility"],
                 )
 
-                for label_name in entry["labels"]:
+                for label_name in dict.fromkeys(entry["labels"]):
                     label = label_cache.get(label_name)
                     if label is None:
                         label = Label.objects.filter(name=label_name, **label_scope_filter).first()
@@ -354,8 +354,9 @@ class SnippetImportSerializer(serializers.Serializer):
                 for file_entry in entry["files"]:
                     language = language_cache.get(file_entry["language"])
                     if language is None:
-                        language, created = Language.objects.get_or_create(name=file_entry["language"])
-                        if created:
+                        language = Language.objects.filter(name=file_entry["language"]).first()
+                        if language is None:
+                            language = Language.objects.create(name=file_entry["language"])
                             languages_created += 1
                         language_cache[file_entry["language"]] = language
                     File.objects.create(
