@@ -54,6 +54,12 @@ dev = [
     "pytest-cov>=4.1.0,<7.2",
     "black>=23.0.0",
 ]
+postgres = [
+    "psycopg[binary]>=3.1.8,<3.4",
+]
+mysql = [
+    "mysqlclient>=2.2.1,<2.4",
+]
 
 [tool.black]
 line-length = 120
