@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SnyPy export file",
+  "description": "Format version 1 of the SnyPy snippet export/import file. Status: draft, see docs/export-import.md. Rules that JSON Schema cannot express (label keys unique, label references resolvable, size limits) are listed there.",
+  "type": "object",
+  "required": ["format", "version", "labels", "snippets"],
+  "properties": {
+    "format": {
+      "const": "snypy-export",
+      "description": "Format identifier."
+    },
+    "version": {
+      "const": 1,
+      "description": "Format version. Importers reject versions they do not support."
+    },
+    "exportedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Informational. Ignored on import."
+    },
+    "source": {
+      "type": "string",
+      "description": "Informational base URL of the exporting instance. Ignored on import."
+    },
+    "labels": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/label" }
+    },
+    "snippets": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/snippet" }
+    }
+  },
+  "$defs": {
+    "label": {
+      "type": "object",
+      "required": ["key", "name"],
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1,
+          "description": "File-local reference, unique within labels[]. Not a database id."
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255,
+          "description": "Label.name"
+        }
+      }
+    },
+    "snippet": {
+      "type": "object",
+      "required": ["title", "visibility", "files"],
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255,
+          "description": "Snippet.title"
+        },
+        "description": {
+          "type": "string",
+          "default": "",
+          "description": "Snippet.description (may be empty)."
+        },
+        "visibility": {
+          "enum": ["PUBLIC", "PRIVATE"],
+          "description": "Snippet.visibility"
+        },
+        "labels": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "description": "A key from the top-level labels[]."
+          }
+        },
+        "files": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/file" }
+        }
+      }
+    },
+    "file": {
+      "type": "object",
+      "required": ["name", "language", "content"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255,
+          "description": "File.name"
+        },
+        "language": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255,
+          "description": "Language.name, matched case-insensitively on import."
+        },
+        "content": {
+          "type": "string",
+          "description": "File.content (may be empty)."
+        }
+      }
+    }
+  }
+}

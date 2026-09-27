@@ -1,0 +1,16 @@
+{
+  "errors": [
+    {
+      "path": "snippets[0].title",
+      "message": "This field may not be blank."
+    },
+    {
+      "path": "snippets[1].labels[0]",
+      "message": "Unknown label key 'l9'."
+    },
+    {
+      "path": "snippets[3].files[0].name",
+      "message": "Ensure this field has no more than 255 characters."
+    }
+  ]
+}
