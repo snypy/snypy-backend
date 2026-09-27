@@ -1,0 +1,8 @@
+{
+  "errors": [
+    {
+      "path": "version",
+      "message": "Unsupported export version 2. Supported versions: 1."
+    }
+  ]
+}
