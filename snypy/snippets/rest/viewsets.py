@@ -148,12 +148,7 @@ class LanguageViewSet(BaseModelViewSet):
             )
 
         return self.queryset.viewable().annotate(
-            snippet_count=Count(
-                Case(
-                    When(query, then=1),
-                    output_field=CharField(),
-                )
-            )
+            snippet_count=Count("files__snippet", filter=query, distinct=True),
         )
 
 
