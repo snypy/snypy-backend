@@ -67,3 +67,86 @@ jobs:
         directory: snypy
         fail_ci_if_error: true
         token: ${{ secrets.CODECOV_TOKEN }}
+
+  test-databases:
+    name: test (${{ matrix.name }})
+    runs-on: ubuntu-latest
+    env:
+      DEBUG: True
+      RUN_MODE: test
+      SECRET_KEY: changeme!
+      ALLOWED_HOSTS: localhost,127.0.0.1
+      DATABASE_URL: ${{ matrix.database-url }}
+      CORS_ORIGIN_WHITELIST: "http://localhost,http://127.0.0.1"
+      CSRF_TRUSTED_ORIGINS: "http://localhost"
+      REGISTER_VERIFICATION_URL: "http://localhost:4200/verify-user/"
+      RESET_PASSWORD_VERIFICATION_URL: "http://localhost:4200/reset-password/"
+      REGISTER_EMAIL_VERIFICATION_URL: "http://localhost:4200/verify-email/"
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: postgresql-16
+            image: postgres:16
+            port: "5432:5432"
+            extra: postgres
+            database-url: postgres://snypy:snypy@127.0.0.1:5432/snypy
+            health-options: >-
+              --health-cmd="pg_isready -U snypy -d snypy"
+              --health-interval=10s --health-timeout=5s --health-retries=10
+          - name: mariadb-11.4
+            image: mariadb:11.4
+            port: "3306:3306"
+            extra: mysql
+            database-url: mysql://root:snypy@127.0.0.1:3306/snypy?charset=utf8mb4
+            health-options: >-
+              --health-cmd="healthcheck.sh --connect --innodb_initialized"
+              --health-interval=10s --health-timeout=5s --health-retries=10
+          - name: mysql-8.4
+            image: mysql:8.4
+            port: "3306:3306"
+            extra: mysql
+            database-url: mysql://root:snypy@127.0.0.1:3306/snypy?charset=utf8mb4
+            health-options: >-
+              --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -psnypy"
+              --health-interval=10s --health-timeout=5s --health-retries=10
+
+    services:
+      db:
+        image: ${{ matrix.image }}
+        ports:
+          - ${{ matrix.port }}
+        # Every image only reads its own variables; the others are ignored.
+        env:
+          POSTGRES_USER: snypy
+          POSTGRES_PASSWORD: snypy
+          POSTGRES_DB: snypy
+          MARIADB_ROOT_PASSWORD: snypy
+          MARIADB_DATABASE: snypy
+          MYSQL_ROOT_PASSWORD: snypy
+          MYSQL_DATABASE: snypy
+        options: ${{ matrix.health-options }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: Install MySQL client headers
+      if: ${{ matrix.extra == 'mysql' }}
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y default-libmysqlclient-dev pkg-config
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e ".[test,${{ matrix.extra }}]"
+
+    - name: Run tests
+      run: pytest
+      working-directory: snypy
