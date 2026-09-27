@@ -131,29 +131,33 @@ class LanguageViewSet(BaseModelViewSet):
             ]
         return super().get_permissions()
 
+    def _get_filter_object(self, model, param):
+        """
+        Resolve the object referenced by a query param, raising a 400 for invalid or unknown ids
+        """
+        try:
+            return model.objects.get(pk=self.request.query_params[param])
+        except (ValueError, TypeError, model.DoesNotExist):
+            raise ValidationError({param: [f"Invalid {param} id."]})
+
     def get_queryset(self):
         viewable_snippets = Snippet.objects.viewable().values_list("pk", flat=True)
 
         query = Q(files__snippet__in=viewable_snippets)
 
         if "team" in self.request.query_params:
-            team = Team.objects.get(pk=self.request.query_params["team"])
+            team = self._get_filter_object(Team, "team")
             query &= Q(files__snippet__team=team)
 
         if "user" in self.request.query_params:
-            user = User.objects.get(pk=self.request.query_params["user"])
+            user = self._get_filter_object(User, "user")
             query &= Q(
                 files__snippet__user=user,
                 files__snippet__team=None,
             )
 
         return self.queryset.viewable().annotate(
-            snippet_count=Count(
-                Case(
-                    When(query, then=1),
-                    output_field=CharField(),
-                )
-            )
+            snippet_count=Count("files__snippet", filter=query, distinct=True),
         )
 
 
