@@ -116,8 +116,8 @@ class TestSnippetFavoriteListAPICreate:
 def snippet_favorite_detail_setup(initial_users):
     snippet = Snippet.objects.create(user=initial_users["user1"], title="Python snippet")
     snippet_favorite = SnippetFavorite.objects.create(user=initial_users["user1"], snippet=snippet)
-    url = reverse("snippetfavorite-detail", kwargs={"pk": snippet.pk})
-    snippet_favorite_count = Snippet.objects.count()
+    url = reverse("snippetfavorite-detail", kwargs={"pk": snippet_favorite.pk})
+    snippet_favorite_count = SnippetFavorite.objects.count()
 
     return {
         "url": url,
