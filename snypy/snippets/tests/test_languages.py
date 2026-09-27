@@ -61,3 +61,10 @@ class TestLanguageSnippetCount:
         self._create_snippet(self.user2, [self.python], visibility=Snippet.VISIBILITY_PUBLIC)
         assert self._count(client, {"user": self.user1.pk}) == 1
         assert self._count(client, {"user": self.user2.pk}) == 1
+
+    @pytest.mark.parametrize("param", ["team", "user"])
+    @pytest.mark.parametrize("value", ["999999", "invalid"])
+    def test_invalid_filter_value(self, client, param, value):
+        response = client.get(self.url, {param: value})
+        assert response.status_code == 400
+        assert param in response.json()
