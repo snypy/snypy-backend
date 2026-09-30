@@ -150,7 +150,9 @@ class LabelSerializer(BaseSerializer):
         if team is None:
             return
 
-        if Team.objects.viewable().filter(pk=team.pk).exists():
+        if UserTeam.objects.filter(
+            team=team, user=get_current_user(), role__in=[UserTeam.ROLE_CONTRIBUTOR, UserTeam.ROLE_EDITOR]
+        ).exists():
             return team
 
         raise serializers.ValidationError("Please select a valid Team")
