@@ -19,6 +19,7 @@ class SnippetFileSerializer(BaseSerializer):
             "language",
             "name",
             "content",
+            "description",
             "created_date",
             "modified_date",
         )
@@ -125,6 +126,7 @@ class FileSerializer(BaseSerializer):
             "language",
             "name",
             "content",
+            "description",
             "created_date",
             "modified_date",
         )
