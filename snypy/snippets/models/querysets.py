@@ -81,6 +81,27 @@ class LabelQuerySet(BaseQuerySet):
             | Q(team__in=UserTeam.objects.filter(user=user).values_list("team", flat=True))
         )
 
+    def editable(self):
+        from teams.models import UserTeam
+
+        user = get_current_user()
+
+        if user.is_anonymous:
+            return self.none()
+
+        return self.filter(
+            Q(user=user, team__isnull=True)
+            | Q(
+                team__in=UserTeam.objects.filter(
+                    user=user,
+                    role__in=[UserTeam.ROLE_CONTRIBUTOR, UserTeam.ROLE_EDITOR],
+                ).values_list("team", flat=True)
+            )
+        )
+
+    def deletable(self):
+        return self.editable()
+
 
 class LanguageQuerySet(BaseQuerySet):
     pass
