@@ -102,6 +102,13 @@ class File(BaseModel, DateModelMixin):
         blank=True,
     )
 
+    description = models.TextField(
+        verbose_name="Description",
+        null=False,
+        blank=True,
+        default="",
+    )
+
     def __str__(self):
         return self.name
 
