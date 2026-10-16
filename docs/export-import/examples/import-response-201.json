@@ -1,0 +1,14 @@
+{
+  "snippets": 3,
+  "files": 4,
+  "labels": {
+    "created": 1,
+    "reused": 2
+  },
+  "warnings": [
+    {
+      "path": "snippets[2].files[0].language",
+      "message": "Unknown language 'zig', imported as 'text'."
+    }
+  ]
+}

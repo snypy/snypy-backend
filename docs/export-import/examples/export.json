@@ -1,0 +1,55 @@
+{
+  "format": "snypy-export",
+  "version": 1,
+  "exportedAt": "2026-09-27T16:00:00Z",
+  "source": "https://api.snypy.com",
+  "labels": [
+    { "key": "l1", "name": "django" },
+    { "key": "l2", "name": "rest" },
+    { "key": "l3", "name": "shell" }
+  ],
+  "snippets": [
+    {
+      "title": "Read-only DRF viewset",
+      "description": "Minimal viewset with a queryset and serializer.",
+      "visibility": "PUBLIC",
+      "labels": ["l1", "l2"],
+      "files": [
+        {
+          "name": "viewsets.py",
+          "language": "python",
+          "content": "from rest_framework import viewsets\n\n\nclass BookViewSet(viewsets.ReadOnlyModelViewSet):\n    queryset = Book.objects.all()\n    serializer_class = BookSerializer\n"
+        },
+        {
+          "name": "urls.py",
+          "language": "python",
+          "content": "router.register(r\"book\", BookViewSet)\n"
+        }
+      ]
+    },
+    {
+      "title": "Find large files",
+      "description": "",
+      "visibility": "PRIVATE",
+      "labels": ["l3"],
+      "files": [
+        {
+          "name": "large-files.sh",
+          "language": "sh",
+          "content": "find . -type f -size +10M -exec ls -lh {} \\;\n"
+        }
+      ]
+    },
+    {
+      "title": "Scratch notes",
+      "visibility": "PRIVATE",
+      "files": [
+        {
+          "name": "notes.zig",
+          "language": "zig",
+          "content": ""
+        }
+      ]
+    }
+  ]
+}
